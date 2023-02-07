@@ -19,6 +19,7 @@ import { AuthContext } from "./context/authContext";
 import Chat from "./pages/chat/Chat";
 import CreatePost from "./pages/createpost/CreatePost";
 import LoginProfile from "./pages/loginprofile/LoginProfile";
+import Otp from "./pages/otp/Otp";
 
 
 function App() {
@@ -47,7 +48,7 @@ function App() {
     }
 
     return children;
-  };
+  }; 
 
   const router = createBrowserRouter([
     {
@@ -88,13 +89,19 @@ function App() {
       path:"/chat",
       element:<Chat/>
     },
-    
+    {
+      path:"/otp",
+      element:<Otp/>
+    },
+    {
+      path:'/nav',
+      element:<Navbar/>
+    }
   ]);
-
   return (
     <div>
       <RouterProvider router={router} />
-    </div>
+    </div>  
   );
 }
 

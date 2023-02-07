@@ -6,7 +6,6 @@ import './CreatePost.scss'
 const CreatePost = () => {
   return (
     <div className='create'>
-       
         <Share/>
     </div>
   )

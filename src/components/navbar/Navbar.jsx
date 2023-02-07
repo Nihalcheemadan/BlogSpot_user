@@ -6,22 +6,22 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import CreateIcon from "@mui/icons-material/Create";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 import Notification from "../notification/Notification";
-
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
   const { currentUser } = useContext(AuthContext);
 
   const [isClicked, setIsClicked] = useState(false);
-  
-  const handleClick = (clicked) => setIsClicked({  [clicked]: true });
+
+  const handleClick = (clicked) => setIsClicked({ [clicked]: true });
 
   return (
     <div className="navbar">
@@ -53,19 +53,26 @@ const Navbar = () => {
 
           </button>
         </TooltipComponent> */}
-          <NotificationsOutlinedIcon />
-        
+        <NotificationsOutlinedIcon />
+
         <div className="user">
-          <img src={currentUser.profilePic} alt="" />
+          <img src={AuthContext.profilePic} alt="" />
           <span>Nihal</span>
         </div>
         <Link to="/create">
           <CreateIcon />
         </Link>
+        <div
+          onClick={() => {
+            localStorage.clear();
+            Navigate("/login");
+          }}
+        >
+          <Link to='/login'>
+            <LogoutIcon />
+          </Link>
+        </div>
       </div>
-      
-      {/* {isClicked && (<Notification />)} */}
-      
     </div>
   );
 };
