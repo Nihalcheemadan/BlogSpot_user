@@ -4,15 +4,12 @@ import { useFormik } from "formik";
 import { Toaster, toast } from "react-hot-toast";
 import { signupformValidation } from "../../helpers/validate";
 import { proceedToSignup } from '../../helpers/helper'
-
 import './register.scss'
-// import Otp from "../otp/Otp";
 
 
 
 function Register() {
   
-  // const [otp,setOtp] =useState('false')
   const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -27,19 +24,17 @@ function Register() {
       console.log(values)
       let signupPromise = proceedToSignup(values)
       toast.promise(signupPromise, {
-        loading: 'Creating...', 
+        loading: 'Creating...',  
         success : <b>Redirecting to otp verification</b>,
       });
       signupPromise.then(()=>{ 
-        // <Otp data={{...values}}/>
         navigate('/otp',{state:{data:{...values}}})
-        // setOtp('true');
       }).catch((error)=>{
+        toast.dismiss()
         toast.error(error.response.data.error);
       })
     },
   });
-
   return (
     <div className="register">
       <Toaster position='top-center' reverseOrder={false}></Toaster>

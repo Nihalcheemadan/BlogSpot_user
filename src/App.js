@@ -15,7 +15,6 @@ import Profile from "./pages/profile/Profile";
 import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
-import { AuthContext } from "./context/authContext";
 import Chat from "./pages/chat/Chat";
 import CreatePost from "./pages/createpost/CreatePost";
 import LoginProfile from "./pages/loginprofile/LoginProfile";
@@ -23,7 +22,6 @@ import Otp from "./pages/otp/Otp";
 
 
 function App() {
-  const {currentUser} = useContext(AuthContext);
 
   const { darkMode } = useContext(DarkModeContext);
 
@@ -42,21 +40,21 @@ function App() {
     );
   };
 
-  const ProtectedRoute = ({ children }) => {
-    if (!currentUser) {
-      return <Navigate to="/login" />;
-    }
+  // const ProtectedRoute = ({ children }) => {
+  //   if (!currentUser) {
+  //     return <Navigate to="/login" />;
+  //   }
 
-    return children;
-  }; 
+  //   return children;
+  // }; 
 
   const router = createBrowserRouter([
     {
       path: "/",
       element: (
-        <ProtectedRoute>
+        // <ProtectedRoute>
           <Layout />
-        </ProtectedRoute>
+        /* </ProtectedRoute> */
       ),
       children: [
         {

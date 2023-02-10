@@ -37,13 +37,12 @@ export async function proceedToSignup(credentials){
     try {
         const { username,email } = credentials;
         const { data } =await axios.post('/api/user/verifySignup',{username,email})
-        console.log(data);
         if( data ){
             const { data : {code} , status } = await axios.get('/api/user/generateOtp');
             if(status === 201){
                 const { status ,data : { message } } = await axios.post('/api/user/createMail',{ username , userEmail:email })
                 return Promise.resolve(message); 
-            } 
+            }
         }
         return Promise.resolve('Action cant perform write now.'); 
     } catch (error) {

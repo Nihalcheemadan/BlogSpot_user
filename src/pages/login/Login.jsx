@@ -25,22 +25,17 @@ function Login() {
       toast.promise(loginPromise, {
         loading: 'Checking...',
         success : <b>Login Successfully...!</b>,
-        
       })
       .then((res)=>{
-        // toast.dismiss(checking);
-        console.log(res); 
+        console.log(res);
         let { token } = res.data;
-        console.log(res.data); 
         localStorage.setItem('token', token);
-        localStorage.setItem('user', true);
         dispatch(authenticate());
         navigate('/',{replace:true})
       })
       .catch((error)=>{
-        console.log(error);
         toast.dismiss(); 
-        toast.error(error?.response?.data?.error) 
+        toast.error(error?.response?.data?.error);
       }) 
     },
   }); 

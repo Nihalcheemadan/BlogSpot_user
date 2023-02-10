@@ -1,4 +1,3 @@
-import "./navbar.scss";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
@@ -9,15 +8,12 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link, Navigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { AuthContext } from "../../context/authContext";
 import CreateIcon from "@mui/icons-material/Create";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { TooltipComponent } from "@syncfusion/ej2-react-popups";
-import Notification from "../notification/Notification";
+import "./navbar.scss";
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
-  const { currentUser } = useContext(AuthContext);
 
   const [isClicked, setIsClicked] = useState(false);
 
@@ -55,10 +51,10 @@ const Navbar = () => {
         </TooltipComponent> */}
         <NotificationsOutlinedIcon />
 
-        <div className="user">
-          <img src={AuthContext.profilePic} alt="" />
+        {/* <div className="user">
+          <img src="" alt="" />
           <span>Nihal</span>
-        </div>
+        </div> */}
         <Link to="/create">
           <CreateIcon />
         </Link>
