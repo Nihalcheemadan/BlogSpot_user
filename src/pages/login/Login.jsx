@@ -8,8 +8,8 @@ import { loginformValidate } from "../../helpers/validate";
 import "./login.scss";
 import { login } from "../../helpers/helper";
 function Login() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const formik = useFormik({
     initialValues: {
