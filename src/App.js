@@ -3,9 +3,7 @@ import Register from "./pages/register/Register";
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
   Outlet,
-  Navigate,
 } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";

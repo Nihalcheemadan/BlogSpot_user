@@ -36,10 +36,9 @@ function Login() {
       .catch((error)=>{
         toast.dismiss(); 
         toast.error(error?.response?.data?.error);
-      }) 
+      })
     },
   }); 
-
   return (
     <div className="login">
        <Toaster position="top-center" reverseOrder={false}></Toaster>

@@ -6,13 +6,26 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
+  const [blog, setBlog ] = useState();
 
   //TEMPORARY
   const liked = false;
+
+    useEffect(()=>{
+      const getBlog = async ( req,res ) => {
+        await axios.get('/api/admin/getBlog').then((res)=>{
+          setBlog(res.data);
+        })
+      }
+      getBlog();
+    },[])
+
+  console.log(blog);
 
   return (
     <div className="post">
