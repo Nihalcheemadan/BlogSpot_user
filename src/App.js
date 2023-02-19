@@ -17,6 +17,7 @@ import Chat from "./pages/chat/Chat";
 import CreatePost from "./pages/createpost/CreatePost";
 import LoginProfile from "./pages/loginprofile/LoginProfile";
 import Otp from "./pages/otp/Otp";
+import Chats from './pages/dummy/Chats'
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
           <div style={{ flex: 6 }}>
             <Outlet />
           </div>
-          <RightBar />
+          {/* <RightBar /> */}
         </div>
       </div>
     );
@@ -42,9 +43,8 @@ function App() {
   //   if (!currentUser) {
   //     return <Navigate to="/login" />;
   //   }
-
   //   return children;
-  // }; 
+  // }
 
   const router = createBrowserRouter([
     {
@@ -92,7 +92,11 @@ function App() {
     {
       path:'/nav',
       element:<Navbar/>
-    }
+    },
+    // {
+    //   path:'/chatdummy',
+    //   element:<Chats/>
+    // }
   ]);
   return (
     <div>

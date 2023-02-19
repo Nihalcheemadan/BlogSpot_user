@@ -1,7 +1,22 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
 import Post from "../post/Post";
 import "./posts.scss";
 
 const Posts = () => {
+
+  const [blog, setBlog ] = useState();
+
+  useEffect(()=>{
+    const getBlog = async ( req,res ) => {
+      await axios.get('/api/admin/getBlog').then((res)=>{
+        setBlog(res.data);
+      })
+    }
+    getBlog();
+  },[])
+
+console.log(blog);
   //TEMPORARY
   const posts = [
     {
@@ -25,8 +40,8 @@ const Posts = () => {
   ];
 
   return <div className="posts">
-    {posts.map(post=>(
-      <Post post={post} key={post.id}/>
+    {blog && blog.map(post=>(
+      <Post post={post} key={post._id}/>
     ))}
   </div>;
 };

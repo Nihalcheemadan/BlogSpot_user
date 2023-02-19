@@ -45,7 +45,7 @@ const LoginProfile = () => {
               <PinterestIcon fontSize="large" />
             </a>
           </div> */}
-          <div className="center">
+          <div className="center" style={{marginRight:'200px'}}>
             <span>Nihal</span>
             <p>1235 followers</p>
             {/* <div className="info">

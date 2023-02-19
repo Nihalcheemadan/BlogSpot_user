@@ -61,7 +61,7 @@ const Createblog = () => {
       .then(async (response) => {
         console.log(response.data.secure_url);
         const imageUrl = response.data.secure_url;
-        console.log(imageUrl, title, content, selectedcategory);
+        console.log(imageUrl, title, content, selectedcategory)
         const response1 = await axios
           .post("/api/admin/createBlog", {
             imageUrl,
@@ -70,12 +70,8 @@ const Createblog = () => {
             category: selectedcategory,
           })
           .then((res) => {
-            console.log(res);
             navigate("/");
           });
-        if (response1.data.success) {
-          toast.success(response1.data.message);
-        }
       });
   };
   return (
@@ -99,12 +95,12 @@ const Createblog = () => {
               onClick={(e) => setSelectedcategory(e.target.value)}
             >
               {categories.map((data, index) => (
-                <option key={data._id} className="inputField" value={data.category}>
+                <option key={data.category} className="inputField" value={data.category}>
                   {data.category} 
-                </option>
-              ))}
+                </option> 
+              ))} 
             </select>
-          </div>
+          </div>  
           <div className="top">
             <label className="title">Write content</label>
             {/* <input
@@ -137,9 +133,7 @@ const Createblog = () => {
                   <span>Add Image</span>
                 </div>
               </label>
-              
-            </div>
-            
+            </div>            
             <div className="right">
               <button type="submit">Share</button>
             </div>

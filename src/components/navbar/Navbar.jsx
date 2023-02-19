@@ -32,10 +32,10 @@ const Navbar = () => {
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
 
-        <div className="search">
+        {/* <div className="search">
           <SearchOutlinedIcon />
           <input type="text" placeholder="Search..." />
-        </div>
+        </div> */}
       </div>
       <div className="right">
         <Link to="/userprofile">
@@ -49,7 +49,7 @@ const Navbar = () => {
 
           </button>
         </TooltipComponent> */}
-        <NotificationsOutlinedIcon />
+        {/* <NotificationsOutlinedIcon /> */}
 
         {/* <div className="user">
           <img src="" alt="" />
