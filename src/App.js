@@ -21,9 +21,7 @@ import Chats from './pages/dummy/Chats'
 
 
 function App() {
-
   const { darkMode } = useContext(DarkModeContext);
-
   const Layout = () => {
     return (
       <div className={`theme-${darkMode ? "dark" : "light"}`}>
@@ -33,7 +31,7 @@ function App() {
           <div style={{ flex: 6 }}>
             <Outlet />
           </div>
-          {/* <RightBar /> */}
+          <RightBar />
         </div>
       </div>
     );

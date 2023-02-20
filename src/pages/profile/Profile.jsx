@@ -9,8 +9,16 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Posts from "../../components/posts/Posts"
 import "./profile.scss";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 const Profile = () => {
+  const location = useLocation();
+  const author = location.state.data;
+
+  const handleFollow = async() =>{
+    await axios.post()
+  }
   return (
     <div className="profile">
       <div className="images">
@@ -20,7 +28,7 @@ const Profile = () => {
           className="cover"
         />
         <img
-          src="https://images.pexels.com/photos/14028501/pexels-photo-14028501.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+          src={author.profileImg}
           alt=""
           className="profilePic"
         />
@@ -45,7 +53,7 @@ const Profile = () => {
             </a>
           </div> */}
           <div className="center">
-            <span>Jane Doe</span>
+            <span>{author.username}</span>
             {/* <div className="info">
               <div className="item">
                 <PlaceIcon />
@@ -56,7 +64,7 @@ const Profile = () => {
                 <span>lama.dev</span>
               </div>
             </div> */}
-            <button >follow</button>
+            <button onClick={()=>handleFollow}>follow</button>
           </div>
           <div className="right">
             <EmailOutlinedIcon />

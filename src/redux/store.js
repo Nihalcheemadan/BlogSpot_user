@@ -7,6 +7,6 @@ export default configureStore({
     reducer:{
         auth: authReducer,
         // post: postReducer,
-        chat: chatSlice
+        // chat: chatSlice
     }
 })

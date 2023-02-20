@@ -32,9 +32,8 @@ const Createblog = () => {
   const [selectedcategory, setSelectedcategory] = useState();
   const [content, setContent] = useState();
   const [image, setImage] = useState();
-
+ 
   const navigate = useNavigate();
-
   console.log(selectedcategory);
 
   useEffect(() => {
@@ -46,34 +45,51 @@ const Createblog = () => {
     fetchData();
   }, []);
   const cloudAPI = "dudskpuk4";
-  const uploadBlog = async (e) => {
+  const uploadBlog = async (e ) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append("file", image);
-    formData.append("upload_preset", "blogapp ");
+    formData.append('file', image);
+    formData.append('upload_preset', 'blogapp');
     console.log(formData);
     let imageUrl = null;
-    await axios
-      .post(
+  
+    try {
+      const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${cloudAPI}/image/upload`,
         formData
-      )
-      .then(async (response) => {
-        console.log(response.data.secure_url);
-        const imageUrl = response.data.secure_url;
-        console.log(imageUrl, title, content, selectedcategory)
-        const response1 = await axios
-          .post("/api/admin/createBlog", {
-            imageUrl,
-            title,
-            content,
-            category: selectedcategory,
-          })
-          .then((res) => {
-            navigate("/");
-          });
-      });
+      );
+      console.log(response.data.secure_url);
+      imageUrl = response.data.secure_url;
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+  
+    try {
+      const token = localStorage.getItem('token');
+      console.log(token, 'token here ');
+      await axios.post(
+        '/api/blog/createBlog',
+        {
+          imageUrl,
+          title,
+          content,
+          category: selectedcategory,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+   
+      navigate('/'); 
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
   return (
     <div className="share">
       <form onSubmit={uploadBlog}>
