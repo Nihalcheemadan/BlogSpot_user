@@ -5,19 +5,20 @@ import "./posts.scss";
 
 const Posts = () => {
 
-  const [blog, setBlog ] = useState();
+  const [blog, setBlog ] = useState([]);
 
   useEffect(()=>{
     const getBlog = async ( req,res ) => {
       await axios.get('/api/admin/getBlog').then((res)=>{
-        setBlog(res.data)
+        setBlog(res.data.blog)
       })
     }
-    getBlog();
+    getBlog(); 
   },[])
 
+
   return <div className="posts">
-    {blog && blog.map(post=>(
+    {Array.isArray(blog) && blog.map((post)=>(
       <Post post={post} key={post._id}/>
     ))}
   </div>; 

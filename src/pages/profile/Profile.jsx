@@ -16,11 +16,18 @@ const Profile = () => {
   const location = useLocation();
   const author = location.state.data;
 
-  const handleFollow = async() =>{
-    await axios.post()
-  }
-  return (
-    <div className="profile">
+  const token = localStorage.getItem("token");
+
+  const handleFollow = async(id) => {
+    await axios.put(`/api/user/following/${id}`,{}, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json" 
+      }
+    });
+  } 
+  return ( 
+    <div className="profile">  
       <div className="images">
         <img
           src="https://images.pexels.com/photos/13440765/pexels-photo-13440765.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
@@ -64,7 +71,7 @@ const Profile = () => {
                 <span>lama.dev</span>
               </div>
             </div> */}
-            <button onClick={()=>handleFollow}>follow</button>
+            <button onClick={()=>handleFollow(author._id)}>follow</button>
           </div>
           <div className="right">
             <EmailOutlinedIcon />

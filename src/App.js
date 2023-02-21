@@ -18,6 +18,7 @@ import CreatePost from "./pages/createpost/CreatePost";
 import LoginProfile from "./pages/loginprofile/LoginProfile";
 import Otp from "./pages/otp/Otp";
 import Chats from './pages/dummy/Chats'
+import Post from "./components/post/Post";
 
 
 function App() {
@@ -93,7 +94,7 @@ function App() {
     },
     // {
     //   path:'/chatdummy',
-    //   element:<Chats/>
+    //   element:<Post/>
     // }
   ]);
   return (

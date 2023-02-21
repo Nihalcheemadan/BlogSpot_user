@@ -76,7 +76,6 @@
         display: flex;
         align-items: center;
         gap: 20px;
-
         .item {
           display: flex;
           align-items: center;
@@ -84,7 +83,27 @@
           cursor: pointer;
           font-size: 14px;
         }
+        .flagItem{
+          display: flex;
+          justify-content: flex-end;
+          cursor: pointer;
+          font-size: 14px;
+          
+          
+        }
       }
     }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .flagItem {
+    padding-left: 520px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .flagItem {
+    padding-left: 20px;
   }
 }

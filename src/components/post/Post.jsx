@@ -1,9 +1,12 @@
 import "./post.scss";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
-import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+import FlagIcon from '@mui/icons-material/Flag';
+import OutlinedFlagOutlinedIcon from '@mui/icons-material/OutlinedFlagOutlined';
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import { Link, useNavigate } from "react-router-dom";
 import Comments from "../comments/Comments";
 import { useEffect, useState } from "react";
@@ -12,14 +15,56 @@ import axios from "axios";
 const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
   const [showFull, setShowFull] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [count ,setCount ] = useState(post.like.length);
+  const [liked, setLiked] = useState();
+  const [count ,setCount ] = useState(post?.like?.length);
+  const [saved,setSaved] = useState();
+  const [ reported, setReported] = useState(true);
+  const [blogId,setBlogId] = useState(post?._id);
   const navigate = useNavigate()
 
+  const token = localStorage.getItem("token");
+
+  
+  
   const handleLikeClick = async(id) => {
-    const token = localStorage.getItem("token");
     await axios.put('/api/blog/likeBlog', 
     { id },
+    { 
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }).then((res)=>{
+      console.log(res.data,'like logged here');
+      // setCount(res.data.post.like);
+      if((res?.data?.liked === true)){
+        setCount(count+1)
+        setLiked(true);
+      }else{
+        setCount(count-1)
+        setLiked(true);
+      }
+      // setLiked(res?.data?.liked);
+    })
+  }; 
+
+  const saveBlog = async(id) => {
+    await axios.put('/api/blog/saveBlog', 
+    { id },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, 
+        "Content-Type": "application/json",
+      },
+    }).then((res)=>{
+      console.log(res.data);
+      setSaved(true)
+    })
+  }
+
+  useEffect( ()=>{
+    axios.post('/api/blog/getSingleBlog', 
+    { blogId },
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -27,37 +72,13 @@ const Post = ({ post }) => {
       },
     }).then((res)=>{
       console.log(res.data);
-      // setCount(res.data.post.like);
-      if(setLiked(res?.data?.liked === true)){
-        setCount(count+1)
-      }else{
-        setCount(count-1)
-      }
-      // setLiked(res?.data?.liked);
+      setLiked(res.data.liked)
+      setSaved(res.data.saved)
+      
     })
-  }; 
+  },[])
 
-  // useEffect(() => {
-  //   // fetch like count on page load
-  //   const fetchLikeCount = async () => {
-  //     const token = localStorage.getItem("token");
-  //     await axios
-  //       .get(`/api/blog/likeBlog/${post._id}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       })
-  //       .then((res) => {
-  //         setLikeCount(res.data.likeCount);
-  //       });
-  //   };
-  //   fetchLikeCount();
-  // }, []);
-  
-  //TEMPORARY
-  // console.log(count.length);
-  // const liked = false;
+
   function getTimeAgo(createdAt) {
     const currentDate = new Date();
     const commentDate = new Date(createdAt);
@@ -76,7 +97,7 @@ const Post = ({ post }) => {
     }
   }
   const limit = 500;
-  const limitedContent = `<p>${post.content.substring(0, limit)}...</p>`;
+  const limitedContent = `<p>${post?.content.substring(0, limit)}...</p>`
 
   return (
     <div className="post">
@@ -88,46 +109,48 @@ const Post = ({ post }) => {
                 style={{ textDecoration: "none", color: "inherit" }}
               >
               </Link>  */}
-            <img   onClick={()=> navigate(`/profile/${post.author._id}`,{state: { data: post.author }})} src={post.author.profileImg} alt="" />
+            <img   onClick={()=> navigate(`/profile/${post?.author?._id}`,{state: { data: post?.author }})} src={post?.author?.profileImg} alt="" />
             <div className="details">
               {/* <span className="date">Nihal</span> */}
-                <span className="name">{post.title}</span>
-              <span className="date">{getTimeAgo(post.createdAt)}</span>
+                <span className="name">{post?.title}</span>
+              <span className="date">{getTimeAgo(post?.createdAt)}</span>
             </div>
           </div>
           <MoreHorizIcon />
         </div> 
         <div className="content">
           {showFull ? (
-            <p dangerouslySetInnerHTML={{ __html: post.content }} />
+            <p dangerouslySetInnerHTML={{ __html: post?.content }} />
           ) : (
             <p dangerouslySetInnerHTML={{ __html: limitedContent }} />
           )}
           <button className="showmore" onClick={() => setShowFull(!showFull)}>
             {showFull ? "Show Less" : "Read More"}
           </button>
-          <img src={post.imageUrl} alt="" />
-          {console.log(post.imageUrl)}
+          <img src={post?.imageUrl} alt="" />
+          {console.log(post?.imageUrl)}
         </div>
         <div className="info">
           <div className="item">
-            <span onClick={()=>handleLikeClick(post._id)}>
-              {liked ? (
-                <FavoriteBorderOutlinedIcon />
+            <span onClick={()=>handleLikeClick(post?._id)}>
+              { (liked === true)  ? (
+                <FavoriteIcon />
                 ) : (
-                  <FavoriteOutlinedIcon />
+                  <FavoriteBorderIcon />
               )}  
             </span>
-            {post.like.length}
+            {post?.like?.length}
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
+            {post?.comments?.length}
           </div> 
-          {/* <div className="item">
-            <ShareOutlinedIcon />
-            Share
-          </div> */}
+          <div className="item" onClick={()=>{saveBlog(post?._id)}}>
+            { (saved === true) ? ( <BookmarkAddedIcon/>) : (<BookmarkBorderIcon />)  }
+          </div>
+          <div className="flagItem" >
+            { (reported === false) ? ( <FlagIcon/>) : (<OutlinedFlagOutlinedIcon />)  }
+          </div>
         </div>
         {commentOpen && <Comments post={post} />}
       </div>
