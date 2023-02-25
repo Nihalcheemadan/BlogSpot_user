@@ -6,6 +6,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 import "./comments.scss";
+import { toast } from "react-hot-toast";
 
 const Comments = ({ post }) => {
   const [comment, setComment] = useState("");
@@ -18,6 +19,7 @@ const Comments = ({ post }) => {
         .then((res) => {
           console.log(res.data);
           setPreviousComments(res.data.comments);
+          
         });
     }; 
     getComment(); 
@@ -42,7 +44,8 @@ const Comments = ({ post }) => {
             "Content-Type": "application/json",
           },
         }
-      );
+      )
+      
     } catch (error) {
       console.error(error);
     }
@@ -91,10 +94,10 @@ const Comments = ({ post }) => {
             <p>{item.comment}</p>
           </div>
           <span className="date" >{getTimeAgo(item.createdAt)}</span>
-          <div className="icons">
+          {/* <div className="icons">
           <FontAwesomeIcon icon={faPen} />
           <FontAwesomeIcon icon={faTrashAlt}  className='delete'/>
-          </div>
+          </div> */}
         </div>   
         ))} 
       </>

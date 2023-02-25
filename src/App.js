@@ -17,8 +17,12 @@ import Chat from "./pages/chat/Chat";
 import CreatePost from "./pages/createpost/CreatePost";
 import LoginProfile from "./pages/loginprofile/LoginProfile";
 import Otp from "./pages/otp/Otp";
-import Chats from './pages/dummy/Chats'
+import Chats from './pages/dummy/Home'
 import Post from "./components/post/Post";
+import ChatModified from "./pages/dummy/NavigatioBar";
+import Mainpage from "./pages/mainpage/Mainpage";
+import Homee from "./pages/dummy/Homee";
+import NavigatioBar from "./pages/dummy/NavigatioBar";
 
 
 function App() {
@@ -26,7 +30,7 @@ function App() {
   const Layout = () => {
     return (
       <div className={`theme-${darkMode ? "dark" : "light"}`}>
-        <Navbar />
+        <NavigatioBar />
         <div style={{ display: "flex" }}>
           
           <div style={{ flex: 6 }}>
@@ -58,6 +62,7 @@ function App() {
           path: "/",
           element: <Home />,
         },
+        
         {
           path: "/profile/:id",
           element: <Profile />,
@@ -72,6 +77,7 @@ function App() {
         }
       ],
     },
+    
     {
       path: "/login",
       element: <Login />,
@@ -89,13 +95,17 @@ function App() {
       element:<Otp/>
     },
     {
-      path:'/nav',
-      element:<Navbar/>
+      path:'/chatdummy',
+      element:<Chats/>
     },
-    // {
-    //   path:'/chatdummy',
-    //   element:<Post/>
-    // }
+    {
+      path:'/home',
+      element:<Homee/>
+    },
+    {
+      path:'/main',
+      element:<Mainpage/>
+    }
   ]);
   return (
     <div>

@@ -1,6 +1,6 @@
 import Image from "../../assets/img.png";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactQuill from "react-quill";
@@ -45,7 +45,27 @@ const Createblog = () => {
     fetchData();
   }, []);
   const cloudAPI = "dudskpuk4";
+
+  const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2MB
+  const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+
   const uploadBlog = async (e ) => {
+
+
+    if (image.size > MAX_FILE_SIZE) {
+      console.error('File size is too large');
+      toast.error('File size is too large')
+      return;
+    }
+  
+    // Validate the file type
+    if (!ALLOWED_FILE_TYPES.includes(image.type)) {
+      toast.error('Invalid file type')
+      console.error('Invalid file type');
+      return;
+    }
+
+
     e.preventDefault();
     const formData = new FormData();
     formData.append('file', image);
@@ -92,6 +112,7 @@ const Createblog = () => {
   
   return (
     <div className="share">
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <form onSubmit={uploadBlog}>
         <div className="container">
           <div className="top">

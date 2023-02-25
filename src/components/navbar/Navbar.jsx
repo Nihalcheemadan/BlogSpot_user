@@ -14,10 +14,17 @@ import "./navbar.scss";
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
+  // const [search,setSearch] = useState('');
 
   const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = (clicked) => setIsClicked({ [clicked]: true });
+
+  // const searchData = (following) => {
+  //   return search === ""
+  //     ? following
+  //     : following.username.toLowerCase().includes(search) 
+  // };
 
   return (
     <div className="navbar">
@@ -32,10 +39,16 @@ const Navbar = () => {
           <DarkModeOutlinedIcon onClick={toggle} />
         )}
 
-        {/* <div className="search">
+        <div className="search">
           <SearchOutlinedIcon />
-          <input type="text" placeholder="Search..." />
-        </div> */}
+          <input
+            type="text"
+            onChange={(e) => {
+              let searchValue = e.target.value.toLocaleLowerCase();
+            }}
+            placeholder="Search..."
+          />
+        </div>
       </div>
       <div className="right">
         <Link to="/userprofile">
@@ -64,7 +77,7 @@ const Navbar = () => {
             Navigate("/login");
           }}
         >
-          <Link to='/login'>
+          <Link to="/login">
             <LogoutIcon />
           </Link>
         </div>

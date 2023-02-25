@@ -2,9 +2,10 @@
 
 .create{
   @include themify($themes) {
-    padding: 20px 70px;
+    padding: 5px 30px;
     height: 550px;
-    background-color: themed("bgSoft");
+    // background-color: themed("bgSoft");
+    background-color: white;
 
     @include mobile {
       padding: 10px;
