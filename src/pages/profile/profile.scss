@@ -2,13 +2,12 @@
 
 .profile {
   @include themify($themes) {
-    background-color: themed("bgSoft");
+    background-color: white;
 
     .images {
       width: 100%;
       height: 300px;
       position: relative;
-
       .cover {
         width: 100%;
         height: 100%;
@@ -81,6 +80,8 @@
           flex: 1;
           display: flex;
           flex-direction: column;
+          margin-top: 55px;
+          margin-left: 295px;
           align-items: center;
           gap: 10px;
           span {
@@ -99,7 +100,6 @@
               align-items: center;
               gap: 5px;
               color: themed("textColorSoft");
-
               span {
                 font-size: 12px;
               }

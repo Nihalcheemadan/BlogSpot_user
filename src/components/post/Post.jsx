@@ -21,6 +21,8 @@ const Post = ({ post }) => {
   const [saved, setSaved] = useState();
   const [reported, setReported] = useState(true);
   const [blogId, setBlogId] = useState(post?._id);
+  // const [change,setChange] = useState(false);
+
   const navigate = useNavigate();
 
 
@@ -92,6 +94,7 @@ const Post = ({ post }) => {
       console.log(response.data);
       setReported(true);
       toast.success(response.data.msg);
+      
     } catch (error) {
       console.error(error);
     }
@@ -144,7 +147,6 @@ const Post = ({ post }) => {
     <>
       <div className="post">
         <Toaster position="top-center" reverseOrder={false}></Toaster>
-
         <div className="container">
           <div className="user">
             <div className="userInfo">

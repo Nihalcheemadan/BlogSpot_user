@@ -5,23 +5,69 @@ import "./posts.scss";
 
 const Posts = () => {
   const [blog, setBlog] = useState([]);
+  // const [selectedButton, setSelectedButton] = useState(null);
+  // const[tempBlog, setTempBlog]= useState([])
+  const[tempProduct, setTempProduct]= useState([])
+  const [selectedButton, setSelectedButton] = useState(null);
+
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     const getBlog = async (req, res) => {
       await axios.get("/api/admin/getBlog").then((res) => {
+        const data = res.data.blog
         setBlog(res.data.blog);
+        category ? setTempProduct(data.filter((product)=>product.category == category)): setTempProduct(data);
       });
     };
     getBlog();
+    
+  }, []);
+
+  
+
+  useEffect(() => {
+    axios.get("/api/user/categories").then((res) => {
+      setCategory(res.data);
+    });
   }, []);
 
   const [search, setSearch] = useState("");
-  
+
   const searchData = (blog) => {
-    return search === ""
-      ? blog
-      : blog.title.toLowerCase().includes(search) 
+    return search === "" ? blog : blog.title.toLowerCase().includes(search);
   };
+
+  const filterByCategory =(work) => {
+    console.log(work,'loggedddddddddddd');
+    setSelectedButton(work);
+
+  const filteredCategory = category.filter((category) =>
+       category.includes(work)
+     )
+     console.log(filteredCategory);
+     
+     if(filteredCategory){
+         
+         let filtered = []
+          filteredCategory.map((category)=>
+                 filtered.push( (blog.filter((products)=> products.category === category.categoryName) ) 
+                ) 
+          )
+
+          // to flattern  nested array
+           let resultProduct =[]
+          for (let [a, b] of filtered) {
+              resultProduct.push(a, b);
+            }
+
+            // to filter undefined product from  array
+            const finalProducts= resultProduct.filter((value) => value !== undefined);
+          
+           setTempProduct(finalProducts)
+     }  
+ 
+};
 
   return (
     <>
@@ -79,9 +125,28 @@ const Posts = () => {
         </button>
       </form>
 
+      <div className="inline-flex mb-4 gap-4">
+        <button
+          // onClick={}
+          className="bg-gray-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded"
+        >
+          View All posts
+        </button>
+        {category &&
+          category?.map((category) => (
+            <div>
+              <button onClick={()=>filterByCategory("Food")}   className="bg-gray-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">
+                {category.category}
+              </button>
+            </div>
+          ))}
+      </div>
+
       <div className="posts">
-        {Array.isArray(blog) &&
-          blog.filter(searchData).map((post) => <Post  post={post} key={post._id} />)}
+        {Array.isArray(tempProduct) &&
+          tempProduct
+            .filter(searchData)
+            .map((post) => <Post post={post} key={post._id} />)}
       </div>
     </>
   );

@@ -31,7 +31,7 @@ function Login() {
         let { token } = res.data;
         localStorage.setItem('token', token);
         dispatch(authenticate());
-        navigate('/',{replace:true})
+        navigate('/home',{replace:true})
       })
       .catch((error)=>{
         toast.dismiss(); 

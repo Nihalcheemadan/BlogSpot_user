@@ -2,7 +2,6 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { io } from "socket.io-client";
-import Navbar from "../nav/Nav";
 
 function ChatBody() {
   const [following, setFollowing] = useState([]);
@@ -10,6 +9,8 @@ function ChatBody() {
   const [currentChat, setCurrentChat] = useState({});
   const [inputMessage, setInputMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  const [change,setChange] = useState(false);
+  // const [receive,setReceive] = useState(false);
 
   const token = localStorage.getItem("token");
   const { userId, username } = jwt_decode(token);
@@ -45,7 +46,7 @@ function ChatBody() {
       setMessages(data);
     };
     getMessages(currentChat._id);
-  }, [currentChat._id]);
+  }, [currentChat._id,change]);
 
   useEffect(() => {
     scrolRef.current.scrollIntoView({ behavior: "smooth" });
@@ -79,6 +80,7 @@ function ChatBody() {
       headers: { Authorization: `Bearer ${token}` },
     });
     setMessages(messages.concat(message));
+    setChange(true ? setChange(false) : setChange(true))
   };
 
   useEffect(() => {
@@ -86,6 +88,7 @@ function ChatBody() {
       socket.current.on("msg-receive", (msg) => {
         setArrivalMessage({ myself: false, messages: msg });
       });
+      // setReceive(true ? setReceive(false) : setReceive(true))
     }
   }, [arrivalMessage])
 
@@ -159,7 +162,7 @@ function ChatBody() {
             )}
             <div class="flex flex-col mt-8">
               <div class="flex flex-row items-center justify-between text-xs">
-                <span class="font-bold">Active Conversations</span>
+                <span class="font-bold">Friends</span>
                 <span class="flex items-center justify-center bg-gray-300 h-4 w-4 rounded-full">
                   {following.length}
                 </span>
