@@ -5,24 +5,21 @@ import {
   RouterProvider,
   Outlet,
 } from "react-router-dom";
-import Navbar from "./components/navbar/Navbar";
-import LeftBar from "./components/leftBar/LeftBar";
-import RightBar from "./components/rightBar/RightBar";
-import Home from "./pages/home/Home";
-import Profile from "./pages/profile/Profile";
+import Posts from "./pages/Post/Posts";
+import Profile from "./pages/Profile";
 import "./style.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
-import Chat from "./pages/chat/Chat";
-import CreatePost from "./pages/createpost/CreatePost";
-import LoginProfile from "./pages/loginprofile/LoginProfile";
+import Chat from "./pages/Chat";
 import Otp from "./pages/otp/Otp";
-import Chats from './pages/dummy/Home'
-import Post from "./components/post/Post";
-import ChatModified from "./pages/dummy/NavigatioBar";
-import Mainpage from "./pages/mainpage/Mainpage";
-import Homee from "./pages/dummy/Homee";
-import NavigatioBar from "./pages/dummy/NavigatioBar";
+import Homee from "./pages/Home";
+import NavigatioBar from "./components/NavigatioBar";
+import Dummy from "./pages/Create";
+import LoginProfile from "./pages/LoginProfile";
+import SingleBlog from "./components/SingleBlog";
+import SingleView from "./pages/SingleView";
+import PostPage from "./components/PostPage";
+import Post from "./pages/Post";
 
 
 function App() {
@@ -32,11 +29,10 @@ function App() {
       <div className={`theme-${darkMode ? "dark" : "light"}`}>
         <NavigatioBar />
         <div style={{ display: "flex" }}>
-          
           <div style={{ flex: 6 }}>
             <Outlet />
           </div>
-          <RightBar />
+          {/* <RightBar /> */}
         </div>
       </div>
     );
@@ -60,24 +56,19 @@ function App() {
       children: [
         {
           path: "/",
-          element: <Home />,
+          element: <Posts />,
         },
-        
         {
           path: "/profile/:id",
           element: <Profile />,
         },
-        {
-          path:"/create",
-          element:<CreatePost/>
-        },
-        {
-          path:"/userprofile",
-          element:<LoginProfile/>
-        }
+        
+        // {
+        //   path:"/user",
+        //   element:<LoginProfile/>
+        // }
       ],
     },
-    
     {
       path: "/login",
       element: <Login />,
@@ -95,16 +86,28 @@ function App() {
       element:<Otp/>
     },
     {
-      path:'/chatdummy',
-      element:<Chats/>
-    },
-    {
       path:'/home',
       element:<Homee/>
     },
     {
-      path:'/main',
-      element:<Mainpage/>
+      path:'/dummy',
+      element:<Dummy/>
+    },
+    {
+      path:'/dprofile/:id',
+      element:<Profile/>
+    },
+    {
+      path:'/userProfile',
+      element:<LoginProfile/>
+    },
+    {
+      path:'/singleBlog/:id',
+      element:<SingleView/>
+    },
+    {
+      path:'/postpage',
+      element:<Post/>
     }
   ]);
   return (

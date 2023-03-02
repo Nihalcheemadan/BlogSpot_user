@@ -1,12 +1,10 @@
-import { teal } from "@mui/material/colors";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import Post from "../post/Post";
-import "./posts.scss";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import NavigatioBar from '../components/NavigatioBar'
+import PostPage from '../components/PostPage'
 
-const Posts = () => {
-
-  const [blog, setBlog] = useState([]);
+const PostBody = () => {
+    const [blog, setBlog] = useState([]);
   const[tempBlog, setTempBlog]= useState([])
   const [selectedButton, setSelectedButton] = useState('allButton');
 
@@ -48,14 +46,14 @@ const viewAll = () => {
   setTempBlog(blog)
   setSelectedButton('allButton')
 }
-
   return (
-    <>
-      <form class="flex items-center mb-5">
+
+      <>
+      <form class="flex items-center p-5 ml-96 w-96">
         <label for="simple-search" class="sr-only">
           Search
         </label>
-        <div class="relative w-full">
+        <div class="relative w-full ">
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
               aria-hidden="true"
@@ -105,7 +103,7 @@ const viewAll = () => {
         </button>
       </form>
 
-      <div className="inline-flex mb-4 gap-4">
+      <div className="inline-flex gap-4 p-5 ml-96 w-{25rem}">
         {selectedButton === 'allButton' ?  (
           <button
           onClick={viewAll}
@@ -143,10 +141,10 @@ const viewAll = () => {
         {Array.isArray(tempBlog) &&
           tempBlog
             .filter(searchData)
-            .map((post) => <Post post={post} key={post._id} />)}
+            .map((post) => <PostPage post={post} key={post._id} />)}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Posts;
+export default PostBody

@@ -8,7 +8,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import { Link, useNavigate } from "react-router-dom";
-import Comments from "../comments/Comments";
+import Comments from "../Comments";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, Toaster } from "react-hot-toast";
@@ -24,7 +24,6 @@ const Post = ({ post }) => {
   // const [change,setChange] = useState(false);
 
   const navigate = useNavigate();
-
 
   const token = localStorage.getItem("token");
 
@@ -94,9 +93,9 @@ const Post = ({ post }) => {
       console.log(response.data);
       setReported(true);
       toast.success(response.data.msg);
-      
     } catch (error) {
       console.error(error);
+      toast.error(error.response.data.error);
     }
   };
 
@@ -141,8 +140,6 @@ const Post = ({ post }) => {
   const limit = 500;
   const limitedContent = `<p>${post?.content.substring(0, limit)}...</p>`;
 
-  
-
   return (
     <>
       <div className="post">
@@ -157,7 +154,8 @@ const Post = ({ post }) => {
               </Link>  */}
               <img
                 onClick={() =>
-                  navigate(`/profile/${post?.author?._id}`, {
+                  
+                  navigate(`/dprofile/${post?.author?._id}`, {
                     state: { data: post?.author },
                   })
                 }
@@ -191,9 +189,13 @@ const Post = ({ post }) => {
               </span>
               {post?.like?.length}
             </div>
-            <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
-              <TextsmsOutlinedIcon />
-              {post?.comments?.length}
+            <div
+              className="item"
+              onClick={() => {
+                reportBlog(post?._id);
+              }}
+            >
+              {reported === false ? <FlagIcon /> : <OutlinedFlagOutlinedIcon />}
             </div>
             <div
               className="item"
@@ -203,14 +205,7 @@ const Post = ({ post }) => {
             >
               {saved === true ? <BookmarkAddedIcon /> : <BookmarkBorderIcon />}
             </div>
-            <div
-              className="flagItem"
-              onClick={() => {
-                reportBlog(post?._id);
-              }}
-            >
-              {reported === false ? <FlagIcon /> : <OutlinedFlagOutlinedIcon />}
-            </div>
+            
           </div>
           {commentOpen && <Comments post={post} />}
         </div>

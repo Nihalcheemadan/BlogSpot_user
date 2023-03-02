@@ -7,12 +7,12 @@ export const authSlice = createSlice({
     reducers:{
         authenticate : (state)=>{
             state.authenticated = true;
-        },
+        }, 
         unAuthenticate: (state)=>{
             state.authenticated = false;
         }
-    }
-})
+    } 
+}) 
 
 export const {authenticate, unAuthenticate} = authSlice.actions;
 export default authSlice.reducer;

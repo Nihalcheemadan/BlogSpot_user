@@ -31,7 +31,7 @@ const Forgotpassword = () => {
         if(err.response.status === 404) toast.error("User with this Email not found!")
         else toast.error("Oops, something went wrong!");
       });
-  };
+  }
   return (
     <div className="login">
        <Toaster position="top-center" reverseOrder={false}></Toaster>

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import "./Createblog.scss";
+// import NavigatioBar from "../../components/NavigatioBar";
 
 const modules = {
   toolbar: [
@@ -26,12 +26,13 @@ const modules = {
   ],
 };
 
-const Createblog = () => {
+const CreateBlog = () => {
   const [categories, setCategories] = useState([]);
   const [title, setTitle] = useState();
   const [selectedcategory, setSelectedcategory] = useState();
   const [content, setContent] = useState();
   const [image, setImage] = useState();
+ 
   const navigate = useNavigate();
   console.log(selectedcategory);
 
@@ -110,6 +111,7 @@ const Createblog = () => {
   };
   
   return (
+
     <div className="share">
       <Toaster position="top-center" reverseOrder={false}></Toaster>
       <form onSubmit={uploadBlog}>
@@ -180,4 +182,4 @@ const Createblog = () => {
   );
 };
 
-export default Createblog;
+export default CreateBlog;
