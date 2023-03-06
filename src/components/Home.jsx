@@ -131,7 +131,7 @@ const Home = () => {
             </div>
           </section>
           <div class="flex justify-center">
-            <Link to='/'>
+            <Link to='/post'>
 
             <button class="bg-indigo-500 mb-16 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
               Explore More

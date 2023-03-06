@@ -3,40 +3,21 @@ import Register from "./pages/register/Register";
 import {
   createBrowserRouter,
   RouterProvider,
-  Outlet,
 } from "react-router-dom";
-import Posts from "./pages/Post/Posts";
 import Profile from "./pages/Profile";
 import "./style.scss";
-import { useContext } from "react";
-import { DarkModeContext } from "./context/darkModeContext";
 import Chat from "./pages/Chat";
 import Otp from "./pages/otp/Otp";
 import Homee from "./pages/Home";
-import NavigatioBar from "./components/NavigatioBar";
-import Dummy from "./pages/Create";
 import LoginProfile from "./pages/LoginProfile";
-import SingleBlog from "./components/SingleBlog";
 import SingleView from "./pages/SingleView";
-import PostPage from "./components/PostPage";
 import Post from "./pages/Post";
+import CreateBlog from "./pages/CreateBlog";
 
 
 function App() {
-  const { darkMode } = useContext(DarkModeContext);
-  const Layout = () => {
-    return (
-      <div className={`theme-${darkMode ? "dark" : "light"}`}>
-        <NavigatioBar />
-        <div style={{ display: "flex" }}>
-          <div style={{ flex: 6 }}>
-            <Outlet />
-          </div>
-          {/* <RightBar /> */}
-        </div>
-      </div>
-    );
-  };
+  // const { darkMode } = useContext(DarkModeContext);
+  
 
   // const ProtectedRoute = ({ children }) => {
   //   if (!currentUser) {
@@ -46,29 +27,6 @@ function App() {
   // }
 
   const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        // <ProtectedRoute>
-          <Layout />
-        /* </ProtectedRoute> */
-      ),
-      children: [
-        {
-          path: "/",
-          element: <Posts />,
-        },
-        {
-          path: "/profile/:id",
-          element: <Profile />,
-        },
-        
-        // {
-        //   path:"/user",
-        //   element:<LoginProfile/>
-        // }
-      ],
-    },
     {
       path: "/login",
       element: <Login />,
@@ -90,8 +48,8 @@ function App() {
       element:<Homee/>
     },
     {
-      path:'/dummy',
-      element:<Dummy/>
+      path:'/create',
+      element:<CreateBlog/>
     },
     {
       path:'/dprofile/:id',
@@ -106,7 +64,7 @@ function App() {
       element:<SingleView/>
     },
     {
-      path:'/postpage',
+      path:'/post',
       element:<Post/>
     }
   ]);

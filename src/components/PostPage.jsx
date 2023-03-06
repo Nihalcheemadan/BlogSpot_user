@@ -2,20 +2,50 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FlagIcon from "@mui/icons-material/Flag";
+import OutlinedFlagOutlinedIcon from "@mui/icons-material/OutlinedFlagOutlined";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import OutlinedFlagIcon from '@mui/icons-material/OutlinedFlag';
+
+import jwtDecode from "jwt-decode";
 
 const PostPage = ({ post }) => {
-  const [commentOpen, setCommentOpen] = useState(false);
-  const [showFull, setShowFull] = useState(false);
   const [liked, setLiked] = useState();
   const [count, setCount] = useState(post?.like?.length);
   const [saved, setSaved] = useState();
   const [reported, setReported] = useState(true);
   const [blogId, setBlogId] = useState(post?._id);
-  // const [change,setChange] = useState(false);
+  const [change, setChange] = useState(false);
 
   const navigate = useNavigate();
 
+  console.log(post, "its logged herer   ");
   const token = localStorage.getItem("token");
+  const { userId } = jwtDecode(token);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const { userId } = jwtDecode(token);
+    if (post.like.includes(userId)) {
+      setLiked(true);
+    }else{
+      setLiked(false); 
+    }
+    if (post.reported.includes(userId)) {
+      setReported(true);
+    }else{
+      setReported(false); 
+    }
+    if (post.saved.includes(userId)) {
+      setSaved(true);
+    }else{
+      setSaved(false); 
+    }
+  }, []);
+  
 
   const handleLikeClick = async (id) => {
     await axios
@@ -34,17 +64,19 @@ const PostPage = ({ post }) => {
         // setCount(res.data.post.like);
         if (res?.data?.liked === true) {
           setCount(count + 1);
-          setLiked(true);
+          setLiked(prev => !prev);
           toast.success(res.data.msg);
+          setChange((prev) => !prev);
         } else {
           setCount(count - 1);
           setLiked(true);
           toast.success(res.data.msg);
         }
-
         // setLiked(res?.data?.liked);
       });
   };
+
+  console.log(reported,'reporteddddddddddddddd');
 
   const saveBlog = async (id) => {
     await axios
@@ -60,7 +92,7 @@ const PostPage = ({ post }) => {
       )
       .then((res) => {
         console.log(res.data);
-        setSaved(true);
+        setSaved(prev => !prev);
         toast.success(res.data.msg);
       });
   };
@@ -81,7 +113,7 @@ const PostPage = ({ post }) => {
         }
       );
       console.log(response.data);
-      setReported(true);
+      setReported(prev => !prev);
       toast.success(response.data.msg);
     } catch (error) {
       console.error(error);
@@ -91,7 +123,6 @@ const PostPage = ({ post }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     axios
       .post(
         "/api/blog/getSingleBlog",
@@ -108,7 +139,7 @@ const PostPage = ({ post }) => {
         setLiked(res.data.liked);
         setSaved(res.data.saved);
       });
-  }, []);
+  }, [handleLikeClick,change,count ]);
 
   function getTimeAgo(createdAt) {
     const currentDate = new Date();
@@ -127,8 +158,6 @@ const PostPage = ({ post }) => {
       return "just now";
     }
   }
-  const limit = 500;
-  const limitedContent = `<p>${post?.content.substring(0, limit)}...</p>`;
 
   return (
     <section class="flex flex-col justify-center antialiased bg-white text-gray-200 ">
@@ -141,9 +170,8 @@ const PostPage = ({ post }) => {
               class="absolute inset-0 bg-gray-50 hidden md:block transform md:translate-y-2 md:translate-x-4 xl:translate-y-4 xl:translate-x-8 group-hover:translate-x-0 group-hover:translate-y-0 transition duration-700 ease-out pointer-events-none"
               aria-hidden="true"
             ></div>
-            <figure class="relative h-0 pb-[56.25%] md:pb-[75%] lg:pb-[56.25%] overflow-hidden transform md:-translate-y-2 xl:-translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition duration-700 ease-out">
+            <figure class="relative h-0  pb-[56.25%] md:pb-[75%] lg:pb-[56.25%] overflow-hidden transform md:-translate-y-2 xl:-translate-y-4 group-hover:translate-x-0 group-hover:translate-y-0 transition duration-700 ease-out">
               <img
-                
                 class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition duration-700 ease-out"
                 src={post?.imageUrl}
                 width="540"
@@ -161,20 +189,12 @@ const PostPage = ({ post }) => {
                       class="inline-flex text-center text-gray-100 py-1 px-3 rounded-full bg-purple-600 hover:bg-purple-700 transition duration-150 ease-in-out"
                       href="#0"
                     >
-                      Product
-                    </a>
-                  </li>
-                  <li class="m-1">
-                    <a
-                      class="inline-flex text-center text-gray-100 py-1 px-3 rounded-full bg-blue-500 hover:bg-blue-600 transition duration-150 ease-in-out"
-                      href="#0"
-                    >
-                      Engineering
+                      {post?.category}
                     </a>
                   </li>
                 </ul>
               </div>
-              <h3 class="text-2xl lg:text-3xl font-bold leading-tight mb-2">
+              <h3 class="text-2xl lg:text-2xl font-bold leading-tight mb-2 text-gray-400">
                 <a
                   class="hover:text-gray-100 transition duration-150 ease-in-out"
                   href="#0"
@@ -183,46 +203,98 @@ const PostPage = ({ post }) => {
                 </a>
               </h3>
             </header>
-            {/* <p class="text-lg text-gray-400 flex-grow">
-              Duis aute irure dolor in reprehenderit in voluptate velit esse
-              cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-              cupidatat.
-            </p> */}
-            {/* <p dangerouslySetInnerHTML={{ __html: post?.content }} /> */}
+
             <p
-                  dangerouslySetInnerHTML={{
-                    __html: `${post.content
-                      .split(" ")
-                      .slice(0, 50)
-                      .join(" ")}...`,
-                  }}
-                />
-                {post.content.split(" ").length > 50 && (
-                  <button onClick={()=>{navigate(`/singleBlog/${post._id}`,{
-                    state:{data: post}
-                  })}} className="text-blue-500 hover:text-blue-700">
-                    Read more
-                  </button>
-                )}
+              className="text-gray-400"
+              dangerouslySetInnerHTML={{
+                __html: `${post.content.split(" ").slice(0, 50).join(" ")}...`,
+              }}
+            />
+            {post.content.split(" ").length > 50 && (
+              <button
+                onClick={() => {
+                  navigate(`/singleBlog/${post._id}`, {
+                    state: { data: post },
+                  });
+                }}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                Read more
+              </button>
+            )}
             <footer class="flex items-center mt-4">
-              <a href="#0">
+              
                 <img
+                onClick={() =>
+                  navigate(`/dprofile/${post?.author?._id}`, {
+                    state: { data: post?.author },
+                  })
+                }
                   class="rounded-full flex-shrink-0 mr-4"
-                  src="https://preview.cruip.com/open-pro/images/news-author-04.jpg"
+                  src={post?.author?.profileImg}
                   width="40"
                   height="40"
                   alt="Author 04"
                 />
-              </a>
-              <div>
-                <a
-                  class="font-medium text-gray-200 hover:text-gray-100 transition duration-150 ease-in-out"
-                  href="#0"
-                >
-                  Chris Solerieu
-                </a>
-                <span class="text-gray-700"> - </span>
-                <span class="text-gray-500">{getTimeAgo(post?.createdAt)}</span>
+              <div className="flex">
+                <div>
+                  <button
+                    className="font-medium text-gray-500 hover:text-gray-400 transition duration-150 ease-in-out"
+                    onClick={() =>
+                      navigate(`/dprofile/${post?.author?._id}`, {
+                        state: { data: post?.author },
+                      })
+                    }
+                  >
+                    {post?.author?.username}
+                  </button>
+                  <span className="text-gray-700"> - </span>
+                  <span className="text-gray-500">
+                    {getTimeAgo(post?.createdAt)}
+                  </span>
+                </div>
+                <div className="flex items-center ml-16 gap-4 cursor-pointer">
+                  <div className="text-gray-500">
+                    <span
+                      className="text-red-400"
+                      onClick={() => handleLikeClick(post?._id)}
+                    >
+                      {liked === true ? (
+                        <FavoriteIcon />
+                      ) : (
+                        <FavoriteBorderIcon />
+                      )}
+                    </span>
+                    {post?.like?.length}
+                  </div>
+                  <div className="">
+                    <span
+                      className="text-gray-500 cursor-pointer"
+                      onClick={() => {
+                        reportBlog(post?._id);
+                      }}
+                    >
+                      {reported === true ? (
+                        <FlagIcon />
+                        ) : (
+                        <OutlinedFlagIcon />
+                      )}
+                    </span>
+                  </div>
+
+                  <div
+                    className="text-gray-500 cursor-pointer"
+                    onClick={() => {
+                      saveBlog(post?._id);
+                    }}
+                  >
+                    {saved === true ? (
+                      <BookmarkAddedIcon />
+                    ) : (
+                      < BookmarkBorderIcon/>
+                    )}
+                  </div>
+                </div>
               </div>
             </footer>
           </div>

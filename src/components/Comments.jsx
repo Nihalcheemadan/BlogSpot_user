@@ -6,40 +6,48 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Comments = ({ post }) => {
   const [comment, setComment] = useState("");
   const [previousComments, setPreviousComments] = useState([]);
+  const [commentsFetched, setCommentsFetched] = useState(false);
+
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const getComment = async (req, res) => {
-      await axios.post("/api/blog/comments", { id: post._id }).then((res) => {
+    const getComment = () => {
+      axios.post("/api/blog/comments", { id: post._id }).then((res) => {
         console.log(res.data);
         setPreviousComments(res.data.comments);
+        setCommentsFetched(prev => !prev);
       });
-    };
+    }; 
     getComment();
-  }, []);
+  }, [post._id,commentsFetched]);
 
   const some = previousComments.user;
 
   const uploadComment = async (e) => {
     try {
+      e.preventDefault();
       const token = localStorage.getItem("token");
       console.log(token, "token here ");
-      await axios.put(
-        "/api/blog/comment/post",
-        {
-          comment,
-          postid: post._id,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+      await axios
+        .put(
+          "/api/blog/comment/post",
+          {
+            comment,
+            postid: post._id,
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        )
     } catch (error) {
       console.error(error);
     }
@@ -94,7 +102,7 @@ const Comments = ({ post }) => {
       </form>
       {previousComments ? (
         <>
-          {previousComments.map((item) => (
+          {previousComments.reverse().map((item) => (
             <article class="p-3 text-base bg-white rounded-lg dark:bg-gray-900">
               <footer class="flex justify-between items-center mb-2">
                 <div class="flex items-center">
@@ -116,66 +124,11 @@ const Comments = ({ post }) => {
                     </time>
                   </p>
                 </div>
+
                 
-                {/* <div
-                  id="dropdownComment1"
-                  class="hidden z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
-                >
-                  <ul
-                    class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                    aria-labelledby="dropdownMenuIconHorizontalButton"
-                  >
-                    <li>
-                      <a
-                        href="#"
-                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Edit
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Remove
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        class="block py-2 px-4 bg-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Report
-                      </a>
-                    </li>
-                  </ul>
-                </div> */}
               </footer>
               <p>{item.comment}</p>
-              {/* <div class="flex items-center mt-4 space-x-4">
-                <button
-                  type="button"
-                  class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400"
-                >
-                  <svg
-                    aria-hidden="true"
-                    class="mr-1 w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    ></path>
-                  </svg>
-                  Reply
-                </button> */}
-              {/* </div> */}
+              
             </article>
           ))}
         </>

@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+
 
 const modules = {
   toolbar: [
@@ -45,9 +47,16 @@ const Create = () => {
   const cloudAPI = "dudskpuk4";
 
   const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2MB
-  const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif"];
+  const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
   const uploadBlog = async (e) => {
+    e.preventDefault();
+    const wordCount = content.trim().split(/\s+/g).length;
+    if (wordCount < 50) {
+      alert("Please write at least 50 words.");
+      return;
+    }
+
     if (image.size > MAX_FILE_SIZE) {
       console.error("File size is too large");
       toast.error("File size is too large");
@@ -59,7 +68,7 @@ const Create = () => {
       console.error("Invalid file type");
       return;
     }
-    e.preventDefault();
+    
     const formData = new FormData();
     formData.append("file", image);
     formData.append("upload_preset", "blogapp");
@@ -110,7 +119,8 @@ const Create = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center mt-8 items-center h-screen bg-gray-100">
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
       <form
         onSubmit={uploadBlog}
         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
@@ -168,11 +178,12 @@ const Create = () => {
           </label>
           <ReactQuill
             style={{ height: "30vh" }}
+            // className="h-96"
             theme="snow"
+            modules={modules}
+            onChange={setContent}
             value={content}
             placeholder={"Write the content here..."}
-            onChange={setContent}
-            modules={modules}
           />
         </div>
         {/* <ImagePreview /> */}

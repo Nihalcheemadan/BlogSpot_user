@@ -27,7 +27,7 @@ const SingleBlog = () => {
       .get(`/api/user/userDetails`, {
         params: {
           id: blog.author,
-        }, 
+        },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -146,7 +146,7 @@ const SingleBlog = () => {
           </h2>
           <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {article &&
-              article.map((article) => (
+              article.slice(0, 4).map((article) => (
                 <article class="max-w-xs">
                   <a href="#">
                     <img
