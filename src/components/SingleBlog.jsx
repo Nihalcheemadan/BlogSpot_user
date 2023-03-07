@@ -1,4 +1,3 @@
-import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,6 +6,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Comments from "./Comments";
 import { toast } from "react-hot-toast";
+import instance from "../utils/baseUrl";
 
 const SingleBlog = () => {
 
@@ -23,8 +23,8 @@ const SingleBlog = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get(`/api/user/userDetails`, {
+    instance
+      .get(`/user/userDetails`, {
         params: {
           id: blog.author,
         },

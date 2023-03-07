@@ -1,9 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import 'react-quill/dist/quill.snow.css';
+import instance from "../utils/baseUrl";
+import axios from "axios";
 
 
 const modules = {
@@ -88,7 +89,7 @@ const Create = () => {
     try {
       const token = localStorage.getItem("token");
       console.log(token, "token here ");
-      await axios.post(
+      await instance.post(
         "/api/blog/createBlog",
         {
           imageUrl,

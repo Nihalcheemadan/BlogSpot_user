@@ -1,8 +1,8 @@
-import axios from "axios";
 import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import instance from "../utils/baseUrl";
 
 const Profile = () => {
   const [followersCount, setFollowersCount] = useState(Number);
@@ -30,8 +30,8 @@ const Profile = () => {
   }, []);
 
   const handleFollow = async (id) => {
-    await axios.put(
-      `/api/user/following/${id}`,
+    await instance.put(
+      `/user/following/${id}`,
       {},
       {
         headers: {
@@ -48,8 +48,8 @@ const Profile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get(`/api/user/userDetails`, {
+    instance
+      .get(`/user/userDetails`, {
         params: {
           id: author._id,
         },

@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { io } from "socket.io-client";
+import instance from "../utils/baseUrl";
 
 function ChatBody() {
   const [following, setFollowing] = useState([]);
@@ -21,8 +21,8 @@ function ChatBody() {
   useEffect(() => {
     const getFollowing = async () => {
       const token = localStorage.getItem("token");
-      const { data } = await axios.post(
-        "/api/blog/following",
+      const { data } = await instance.post(
+        "/blog/following",
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -39,7 +39,7 @@ function ChatBody() {
   useEffect(() => {
     const getMessages = async (user) => {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get(`/api/user/getMessages?to=${user}`, {
+      const { data } = await instance.get(`/user/getMessages?to=${user}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setMessages(data);
@@ -72,7 +72,7 @@ function ChatBody() {
       to: currentChat._id,
       messages: inputMessage,
     };
-    await axios.post("/api/user/sendMessage", data, {
+    await instance.post("/user/sendMessage", data, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setMessages(messages.concat(message));

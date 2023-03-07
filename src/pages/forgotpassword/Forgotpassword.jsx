@@ -1,7 +1,7 @@
-import axios from 'axios';
 import React, { useState } from 'react'
 import { toast, Toaster } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom';
+import instance from '../../utils/baseUrl';
 import './forgotpassword.scss'
 
 const Forgotpassword = () => {
@@ -11,13 +11,13 @@ const Forgotpassword = () => {
     e.preventDefault();
     if(!email) return toast.error("Email required");
     
-      await axios.post('/api/user/authenticate',{email}) 
+      await instance.post('/user/authenticate',{email}) 
     
       .then(async(res) => {
-        const { data : {code}  } = await axios.get('/api/user/generateOtp');
+        const { data : {code}  } = await instance.get('/user/generateOtp');
         console.log(code);
             if(code){
-                const { status ,data : { message } } = await axios.post('/api/user/createMail',{ username:"" , userEmail:email })
+                const { status ,data : { message } } = await instance.post('/user/createMail',{ username:"" , userEmail:email })
                 navigate('/otp',{ state: { data: {email:email} } }) 
                 return Promise.resolve(message);   
             }     

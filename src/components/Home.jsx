@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import instance from "../utils/baseUrl";
 
 const backgroundImageStyle = {
   backgroundImage: `url("https://images.unsplash.com/photo-1542435503-956c469947f6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80")`,
@@ -13,7 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     const getBlog = async (req, res) => {
-      await axios.get("/api/admin/getBlog").then((res) => {
+      await instance.get("/admin/getBlog").then((res) => {
         setBlog(res.data.blog);
       });
     };

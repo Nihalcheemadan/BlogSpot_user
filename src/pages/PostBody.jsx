@@ -1,7 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import NavigatioBar from "../components/NavigatioBar";
 import PostPage from "../components/PostPage";
+import instance from "../utils/baseUrl";
 
 const PostBody = () => {
   const [blog, setBlog] = useState([]);
@@ -12,7 +12,7 @@ const PostBody = () => {
 
   useEffect(() => {
     const getBlog = async (req, res) => {
-      await axios.get("/api/admin/getBlog").then((res) => {
+      await instance.get("/admin/getBlog").then((res) => {
         const data = res.data.blog;
         setBlog(res.data.blog);
         category
@@ -24,7 +24,7 @@ const PostBody = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/user/categories").then((res) => {
+    instance.get("/user/categories").then((res) => {
       setCategory(res.data);
     });
   }, []);

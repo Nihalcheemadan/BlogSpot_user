@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +6,7 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import instance from "../utils/baseUrl";
 
 const Comments = ({ post }) => {
   const [comment, setComment] = useState("");
@@ -18,7 +18,7 @@ const Comments = ({ post }) => {
 
   useEffect(() => {
     const getComment = () => {
-      axios.post("/api/blog/comments", { id: post._id }).then((res) => {
+      instance.post("/blog/comments", { id: post._id }).then((res) => {
         console.log(res.data);
         setPreviousComments(res.data.comments);
         setCommentsFetched(prev => !prev);
@@ -34,9 +34,9 @@ const Comments = ({ post }) => {
       e.preventDefault();
       const token = localStorage.getItem("token");
       console.log(token, "token here ");
-      await axios
+      await instance
         .put(
-          "/api/blog/comment/post",
+          "/blog/comment/post",
           {
             comment,
             postid: post._id,

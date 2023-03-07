@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +10,7 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import OutlinedFlagIcon from '@mui/icons-material/OutlinedFlag';
 
 import jwtDecode from "jwt-decode";
+import instance from "../utils/baseUrl";
 
 const PostPage = ({ post }) => {
   const [liked, setLiked] = useState();
@@ -48,9 +48,9 @@ const PostPage = ({ post }) => {
   
 
   const handleLikeClick = async (id) => {
-    await axios
+    await instance
       .put(
-        "/api/blog/likeBlog",
+        "/blog/likeBlog",
         { id },
         {
           headers: {
@@ -79,10 +79,12 @@ const PostPage = ({ post }) => {
   console.log(reported,'reporteddddddddddddddd');
 
   const saveBlog = async (id) => {
-    await axios
+    await instance
       .put(
-        "/api/blog/saveBlog",
+        "//blog/saveBlog",
         { id },
+
+
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -102,8 +104,8 @@ const PostPage = ({ post }) => {
   const reportBlog = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(
-        "/api/blog/reportBlog",
+      const response = await instance.put(
+        "/blog/reportBlog",
         { id },
         {
           headers: {
@@ -123,9 +125,9 @@ const PostPage = ({ post }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
+    instance
       .post(
-        "/api/blog/getSingleBlog",
+        "/blog/getSingleBlog",
         { blogId },
         {
           headers: {

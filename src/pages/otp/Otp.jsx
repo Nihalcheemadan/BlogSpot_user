@@ -1,8 +1,8 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate, useLocation } from "react-router-dom";
 import { verifyOTP } from '../../helpers/helper';
+import instance from '../../utils/baseUrl';
 import './otp.scss'
 
 const Otp = () => {
@@ -24,10 +24,10 @@ const Otp = () => {
   };
 
   const resendOtp = async (e)=>{
-    let {data:{ code }} = await axios.get('/api/user/generateOtp')
+    let {data:{ code }} = await instance.get('/user/generateOtp')
       if(code){
           let text = `Your new otp is ${code}. Verify and signup.`;
-          await axios.post('/api/user/createMail', {username:data.username,userEmail:data.email,text,subject : "Resend OTP"})
+          await instance.post('/user/createMail', {username:data.username,userEmail:data.email,text,subject : "Resend OTP"})
       }
       toast.success("OTP resent successfully.") 
       setCounter(60)

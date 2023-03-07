@@ -1,8 +1,8 @@
-import axios from "axios";
 import jwtDecode from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import instance from "../utils/baseUrl";
 
 const UserProfile = () => {
   const [followersCount, setFollowersCount] = useState(Number);
@@ -19,8 +19,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
-      .get(`/api/user/userDetails`, {
+    instance
+      .get(`/user/userDetails`, {
         params: {
           id: userId,
         },
