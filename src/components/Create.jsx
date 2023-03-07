@@ -39,7 +39,7 @@ const Create = () => {
   console.log(selectedcategory);
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("/api/admin/getCategory");
+      const response = await instance.get("/admin/getCategory");
       const data = await response.json();
       setCategories(data);
     }
