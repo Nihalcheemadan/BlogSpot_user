@@ -2,21 +2,48 @@ import React, { useEffect, useRef, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { io } from "socket.io-client";
 import instance from "../utils/baseUrl";
+import { toast } from "react-hot-toast";
+import dateFormat, { masks } from "dateformat";
+import InputEmoji from "react-input-emoji";
+import { BiVideoPlus, BiImageAdd } from "react-icons/bi";
+
+
+const toastConfig = {
+  position: "top-center",
+  autoClose: 5000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  theme: "colored",
+};
+
+
 
 function ChatBody() {
   const [following, setFollowing] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [message, setMessages] = useState([]);
   const [currentChat, setCurrentChat] = useState({});
   const [inputMessage, setInputMessage] = useState("");
-  const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [change,setChange] = useState(false);
-  // const [receive,setReceive] = useState(false);
+  const [arrivalMessage, setArrivalMessage] = useState({});
+
+  const [image, setImage] = useState(null);
+  const [videoFile, setVideoFile] = useState(null);
+
+
+  console.log(message,'messssssssssssssssssss');
 
   const token = localStorage.getItem("token");
-  const { userId, username } = jwt_decode(token);
-  console.log(username, "username");
+  const receiverId = currentChat._id
   const scrolRef = useRef();
   const socket = useRef();
+
+  const cloudAPI = "dqrsgqgot";
+  const imageRef = useRef();
+  const videoRef = useRef();
+
+  const { userId  } = jwt_decode(token)
 
   useEffect(() => {
     const getFollowing = async () => {
@@ -28,10 +55,11 @@ function ChatBody() {
           headers: { Authorization: `Bearer ${token}` },
         }
       )
-      setFollowing(data.Following);
+      setFollowing(data);
     }
     getFollowing();
   }, [])
+  
   const handleSelect = (user) => {
     setCurrentChat(user);
   };
@@ -53,44 +81,101 @@ function ChatBody() {
 
   useEffect(() => {
     if (currentChat !== "") {
+      // socket.current = io("https://www.server.blogsspot.site");
       socket.current = io("http://localhost:5000");
-      socket.current.emit("addUser", userId);
+      socket.current.emit("addUser", receiverId);
     }
-  }, [userId]);
+  }, [receiverId]);
 
   const sendmsg = async () => {
-    const message = {
+    const messages = {
       myself: true,
-      messages: inputMessage,
+      message: inputMessage,
+      time: Date.now(),
     };
     socket.current.emit("send-msg", {
       to: currentChat._id,
-      messages: inputMessage,
+      message: inputMessage,
+      // from: userId,
+      type:"text",
     });
     let token = localStorage.getItem("token");
     let data = {
       to: currentChat._id,
-      messages: inputMessage,
+      message: inputMessage,
+      type:"text" 
     };
     await instance.post("/user/sendMessage", data, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    setMessages(messages.concat(message));
-    setChange(true ? setChange(false) : setChange(true))
+    setMessages(message.concat(messages));
+    setInputMessage("");
   };
 
-  useEffect(() => {
-    if (socket.current) {
-      socket.current.on("msg-receive", (msg) => {
-        setArrivalMessage({ myself: false, messages: msg });
-      });
-      // setReceive(true ? setReceive(false) : setReceive(true))
-    }
-  }, [arrivalMessage])
 
   useEffect(() => {
-    arrivalMessage && setMessages((pre) => [...pre, arrivalMessage]);
+    if(socket.current) {
+      socket.current.on("msg-receive", (data) => {
+        setArrivalMessage({ myself: false, message:data.message,type:data.type ,time: Date.now()});
+      })
+    }
+  }, [arrivalMessage]) 
+
+  useEffect(() => {
+    if (arrivalMessage.message) {
+      setMessages((pre) => [...pre, arrivalMessage]);
+    }
   }, [arrivalMessage]);
+
+  const UploadFile = async () => {
+    if (videoFile === null && image === null) {
+      return;
+    }
+    const type = !image ? "video" : "image";
+    const file = !image ? videoFile : image;
+    if (file.size > 7000000) {
+      toast.info("🥵 Seems like a big file, take some time", toastConfig);
+    }
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudAPI}/${type}/upload`;
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", "fotwebcloud");
+    data.append("cloud_name", "dqrsgqgot");
+    try {
+      const res = await fetch(cloudinaryUrl, {
+        method: "post",
+        body: data,
+      });
+      const json = await res.json();
+      const url = json.url;
+
+      const messages = {
+        myself: true,
+        message: url,
+        type: type,
+      };
+      socket.current.emit("send-msg", {
+        to: currentChat._id,
+        message: url,
+        type: type,
+      });
+      let fileData = {
+        to: currentChat._id,
+        message: url,
+        type,
+      };
+      await instance.post(
+        "/user/sendMessage",
+        fileData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setMessages(message.concat(messages));
+    } catch (err) {
+      toast.error("Oops, uploading failed");
+    }
+  };
 
 
   const [search, setSearch] = useState("");
@@ -102,10 +187,9 @@ function ChatBody() {
 
   return (
     <div>
-      
-      <div class="flex  h-screen antialiased text-gray-800">
-        <div class="flex flex-row h-full w-full overflow-x-hidden ">
-          <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
+      <div className="flex h-screen antialiased text-gray-800">
+        <div className="flex flex-row h-full w-full overflow-x-scroll">
+        <div class="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
             <div className="relative text-gray-600">
               <input
                 type="search"
@@ -180,103 +264,158 @@ function ChatBody() {
               </div>
             </div>
           </div>
-          <div class="flex flex-col flex-auto h-full p-6">
-            <div class="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-              <div class="flex flex-col h-full overflow-x-auto mb-4">
-                <div class="flex flex-col h-full">
-                  {Object.keys(currentChat).length !== 0 && (
-                    <div class="grid grid-cols-12 gap-y-2">
-                      {messages.map((msg) =>
-                        msg.myself ? (
-                          <div
-                            key={msg.message}
-                            class="col-start-6 col-end-13 p-3 rounded-lg"
-                          >
-                            <div class="flex items-center justify-start flex-row-reverse">
-                              <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                Me
-                                {console.log(msg, "message logged")}
+          <div className="flex flex-col flex-auto h-full  min-w-[380px] p-6">
+            <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
+              <div className="flex flex-col h-full overflow-x-auto mb-4">
+                <div className="flex flex-col h-screen">
+                {Object.keys(currentChat).length !== 0 && (
+                  <div className="grid grid-cols-12 gap-y-2">
+                    {message.map((msg) =>
+                      msg.myself ? (
+                        <div
+                          key={msg._id}
+                          className="col-start-6 col-end-13 p-3 rounded-lg"
+                        >
+                          <div className="flex items-center justify-start flex-row-reverse">
+                            <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                              {msg?.type === "video" ? (
+                                <video src={msg.message} controls></video>
+                              ) : msg.type === "image" ? (
+                                <img  className="h-96 w-full" src={msg.message}></img>
+                              ) : (
+                                <div className="text-base font-semibold">
+                                {msg.message ? msg.message : ""}
                               </div>
-                              <div class="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                                <div>{msg.message}</div>
-                              </div>
-                            </div>
-                          </div>
-                        ) : (
-                          <div
-                            key={msg.message}
-                            class="col-start-1 col-end-8 p-3 rounded-lg"
-                          >
-                            <div class="flex flex-row items-center">
-                              <div class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                {currentChat.username[0]}
-                              </div>
-                              <div class="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                                <div>{msg.message}</div>
+                              )}
+                                <div className=" flex justify-end">
+                                <p className="text-xs text-slate-500">
+                                  {dateFormat(msg.createdAt, "shortTime")}
+                                </p>
                               </div>
                             </div>
                           </div>
-                        )
-                      )}
-                    </div>
+                        </div>
+                      ) : (
+                        <div
+                          key={msg._id}
+                          className="col-start-1 col-end-8 p-3 rounded-lg"
+                        >
+                          <div className="flex flex-row items-center">
+                            <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
+                              {msg?.type === "video" ? (
+                                <video src={msg.message} controls></video>
+                              ) : msg.type === "image" ? (
+                                <img src={msg.message}></img>
+                              ) : (
+                                <div className="text-base font-semibold">
+                                  {msg.message ? msg.message : ""}
+                                </div>
+                              )}
+                              <div className=" flex justify-end">
+                                <p className="text-xs text-slate-400">
+                                  {dateFormat(msg.createdAt, "shortTime")}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
                   )}
                   <div ref={scrolRef} />
                 </div>
               </div>
               {Object.keys(currentChat).length !== 0 && (
-              <div class="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
-                <div>
-                  <button class="flex items-center justify-center text-gray-400 hover:text-gray-600">
-                    <svg
-                      class="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                <div class="flex-grow ml-4">
-                  <div class="relative w-full">
+              <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
+                <div className="flex-grow ml-4">
+                  <div className="relative w-full">
                     <input
+                      value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       type="text"
-                      class="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                      className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
                     />
-                    <button class="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
-                      <svg
-                        class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                      </svg>
+                    <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
+                      <InputEmoji
+                        value={inputMessage}
+                        onChange={setInputMessage}
+                      />
                     </button>
+
+                    <div
+                      style={{
+                        display: "block",
+                        textAlign: "center",
+                        height: "max-content",
+                        position: "absolute",
+                        marginTop: "-7em",
+                        marginLeft: "-0.7em",
+                      }}
+                    >
+                      <div
+                        onClick={() => imageRef.current.click()}
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          padding: "5px",
+                          borderRadius: "50%",
+                          // marginBottom: "0.1em",
+                        }}
+                      >
+                        <BiImageAdd
+                          style={{ fontSize: "2em", color: "#21F052" }}
+                        />
+                        <input
+                          disabled={videoFile}
+                          onChange={(e) => {
+                            setImage(e.target.files[0]);
+                          }}
+                          type="file"
+                          id="file"
+                          ref={imageRef}
+                          style={{ display: "none" }}
+                          accept="image/x-png,image/gif,image/jpeg"
+                        />
+                      </div>
+
+                      <div
+                        onClick={() => videoRef.current.click()}
+                        style={{
+                          backgroundColor: "#FFFFFF",
+                          padding: "5px",
+                          borderRadius: "50%",
+                          marginBottom: "0.2em",
+                        }}
+                      >
+                        <BiVideoPlus
+                          style={{ fontSize: "2em", color: "#EC4768" }}
+                        />
+                        <input
+                          disabled={image}
+                          onChange={(e) => {
+                            setVideoFile(e.target.files[0]);
+                          }}
+                          type="file"
+                          id="file"
+                          ref={videoRef}
+                          style={{ display: "none" }}
+                          accept="video/mp4,video/x-m4v,video/*"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="ml-4">
+                <div className="ml-4">
                   <button
-                    onClick={sendmsg}
-                    class="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                    onClick={() =>
+                      inputMessage === "" ? UploadFile() : sendmsg()
+                    }
+                    className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
                   >
-                    <span>Send</span>
-                    <span class="ml-2">
+                    {/* <spanv className=" ">Send</spanv> */}
+                    <span className="ml-2">
                       <svg
-                        class="w-4 h-4 transform rotate-45 -mt-px"
+                        className="w-4 h-4 transform = rotate-45 -mt-px"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

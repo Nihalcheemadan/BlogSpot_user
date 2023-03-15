@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import NavigatioBar from "../components/NavigatioBar";
 import PostPage from "../components/PostPage";
 import instance from "../utils/baseUrl";
+import { useDispatch, useSelector } from "react-redux";
+import { setCategories } from "../redux/slices/categorySlice";
+import { setBlogs } from "../redux/slices/blogSlice";
 
 const PostBody = () => {
+  const dispatch = useDispatch();
   const [blog, setBlog] = useState([]);
   const [tempBlog, setTempBlog] = useState([]);
   const [selectedButton, setSelectedButton] = useState("allButton");
@@ -15,19 +19,23 @@ const PostBody = () => {
       await instance.get("/admin/getBlog").then((res) => {
         const data = res.data.blog;
         setBlog(res.data.blog);
+        dispatch(setBlogs(res.data.blog))
         category
           ? setTempBlog(data.filter((blog) => blog.category === category))
           : setTempBlog(data);
-      });
-    };
+      })
+    }
     getBlog();
-  }, []);
+  }, [])
+
 
   useEffect(() => {
-    instance.get("/user/categories").then((res) => {
+    instance.get("/user/categories").then((res) => { 
       setCategory(res.data);
+      dispatch(setCategories(res.data))
     });
   }, []);
+
 
   const [search, setSearch] = useState("");
 

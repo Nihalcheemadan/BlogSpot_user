@@ -7,39 +7,36 @@ import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import instance from "../utils/baseUrl";
+import { useSelector } from "react-redux";
 
-const Comments = ({ post }) => {
+const Comments = () => {
   const [comment, setComment] = useState("");
   const [previousComments, setPreviousComments] = useState([]);
-  const [commentsFetched, setCommentsFetched] = useState(false);
+  const [change , setChange] = useState(false)
 
-
-  const navigate = useNavigate();
+  const { singleBlog } = useSelector((state) => state.blog)
 
   useEffect(() => {
     const getComment = () => {
-      instance.post("/blog/comments", { id: post._id }).then((res) => {
+      instance.post("/blog/comments", { id: singleBlog._id }).then((res) => {
         console.log(res.data);
         setPreviousComments(res.data.comments);
-        setCommentsFetched(prev => !prev);
       });
-    }; 
+    };
     getComment();
-  }, [post._id,commentsFetched]);
+  }, [singleBlog._id,change]);
 
-  const some = previousComments.user;
 
   const uploadComment = async (e) => {
     try {
       e.preventDefault();
       const token = localStorage.getItem("token");
-      console.log(token, "token here ");
       await instance
         .put(
           "/blog/comment/post",
           {
             comment,
-            postid: post._id,
+            postid: singleBlog._id,
           },
           {
             headers: {
@@ -48,6 +45,7 @@ const Comments = ({ post }) => {
             },
           }
         )
+        setChange(prev => !prev)
     } catch (error) {
       console.error(error);
     }

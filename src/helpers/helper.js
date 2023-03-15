@@ -37,11 +37,13 @@ export async function proceedToSignup(credentials){
     try {
         const { username,email } = credentials;
         const { data } =await instance.post('/user/verifySignup',{username,email})
+        console.log(data,'data here');
         if( data ){
             const { data : {code} , status } = await instance.get('/user/generateOtp');
             if(status === 201){
                 const { status ,data : { message } } = await instance.post('/user/createMail',{ username , userEmail:email })
-                return Promise.resolve(message); 
+                console.log(data,status,'data and status here');
+                return Promise.resolve(data); 
             }
         }
         return Promise.resolve('Action cant perform write now.'); 

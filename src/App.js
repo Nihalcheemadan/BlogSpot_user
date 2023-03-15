@@ -1,30 +1,26 @@
-import Login from "./pages/login/Login";
-import Register from "./pages/register/Register";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
 } from "react-router-dom";
 import Profile from "./pages/Profile";
 import "./style.scss";
 import Chat from "./pages/Chat";
-import Otp from "./pages/otp/Otp";
+import Otp from "./pages/Otp";
 import Homee from "./pages/Home";
 import LoginProfile from "./pages/LoginProfile";
 import SingleView from "./pages/SingleView";
 import Post from "./pages/Post";
 import CreateBlog from "./pages/CreateBlog";
+import Error from "./components/Error";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dummy from "./pages/Dummy";
 
 
 function App() {
-  // const { darkMode } = useContext(DarkModeContext);
-  
 
-  // const ProtectedRoute = ({ children }) => {
-  //   if (!currentUser) {
-  //     return <Navigate to="/login" />;
-  //   }
-  //   return children;
-  // }
 
   const router = createBrowserRouter([
     {
@@ -44,29 +40,39 @@ function App() {
       element:<Otp/>
     },
     {
-      path:'/home',
+      path:'/',
       element:<Homee/>
     },
     {
       path:'/create',
-      element:<CreateBlog/>
+      element: <ProtectedRoute><CreateBlog/></ProtectedRoute> 
     },
     {
       path:'/dprofile/:id',
-      element:<Profile/>
+      element:<ProtectedRoute><Profile/></ProtectedRoute>  
     },
     {
       path:'/userProfile',
-      element:<LoginProfile/>
+      element:<ProtectedRoute><LoginProfile/></ProtectedRoute> 
     },
     {
       path:'/singleBlog/:id',
-      element:<SingleView/>
+      element:<ProtectedRoute><SingleView/></ProtectedRoute> 
     },
     {
       path:'/post',
       element:<Post/>
+    },
+    {
+      path:'*',
+      element:<Error/>
+    },
+    {
+      path:'/dummy',
+      element: <Dummy/>
     }
+
+
   ]);
   return (
     <div>

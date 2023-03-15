@@ -39,13 +39,13 @@ const Create = () => {
   console.log(selectedcategory);
   useEffect(() => {
     async function fetchData() {
-      const response = await instance.get("/admin/getCategory");
-      const data = await response.json();
+      const {data} = await instance.get("/admin/getCategory");
       setCategories(data);
     }
     fetchData();
-  }, []);
+  }, []); 
   const cloudAPI = "dudskpuk4";
+
 
   const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2MB
   const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -90,7 +90,7 @@ const Create = () => {
       const token = localStorage.getItem("token");
       console.log(token, "token here ");
       await instance.post(
-        "/api/blog/createBlog",
+        "/blog/createBlog",
         {
           imageUrl,
           title,

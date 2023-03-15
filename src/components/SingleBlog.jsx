@@ -4,16 +4,21 @@ import { useLocation, useNavigate } from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Comments from "./Comments";
 import { toast } from "react-hot-toast";
 import instance from "../utils/baseUrl";
+import Comments from "../components/Comments";
+import { useDispatch } from "react-redux";
+import { setSingleBlog } from "../redux/slices/blogSlice";
 
 const SingleBlog = () => {
 
   const location = useLocation();
+  const dispatch = useDispatch()
   const blog = location.state.data;
   const navigate = useNavigate();
-  
+
+  dispatch(setSingleBlog(location.state.data))
+
   const token = localStorage.getItem("token");
   const { userId } = jwtDecode(token);
   
@@ -37,43 +42,42 @@ const SingleBlog = () => {
         setUser(res.data.user);
         setArticle(res.data.article);
       });
-  }, []);
+  }, [blog]);
 
   useEffect(() => {
     if (blog.author === userId) {
       setAuthor('author');
     }
-  }, []);
+  }, [blog]);
 
-  // const handleEditClick = (blogId) => {
-  //   axios.post("/api/blog/editBlog", {
-  //     params: {
-  //       id: blogId,
-  //     },
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  //   setAuthor('')
-  // };
+  const handleEditClick = (blogId) => {
+    instance.post("/blog/editBlog", {
+      params: {
+        id: blogId,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+  };
 
-  // function handleDeleteClick(blogId) {
-  //   axios
-  //     .delete(`/api/blog/deleteBlog`, {
-  //       params: {
-  //         id: blogId,
-  //       },
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "application/json",
-  //       }, 
-  //     })
-  //     .then((res) => {
-  //       toast.success(res.data.msg);
-  //       navigate("/");
-  //     });
-  // }
+  function handleDeleteClick(blogId) {
+    instance
+      .delete(`/blog/deleteBlog`, {
+        params: {
+          id: blogId,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        }, 
+      })
+      .then((res) => {
+        toast.success(res.data.msg);
+        navigate("/post");
+      });
+  }
 
 
   return (
@@ -118,21 +122,21 @@ const SingleBlog = () => {
             <figure>
               <img src={blog.imageUrl} alt="" />
             </figure>
-            {/* {author === 'author' && ( */}
-              {/* <div class="p-2 flex items-end space-x-4">
-                <button onClick={handleEditClick()} >
+            {author === 'author' && ( 
+              <div class="p-2 flex items-end space-x-4">
+                <button onClick={()=>handleEditClick} >
                   <EditIcon /> 
-                </button> */}
-                {/* <button onClick={handleDeleteClick(blog._id)}>
+                </button>
+                <button onClick={()=>handleDeleteClick(blog._id)}>
                   <DeleteIcon />
-                </button> */}
-              {/* </div> */}
-            {/* )} */}
+                </button>
+              </div> 
+             )}
             <p
               className="mt-4"
               dangerouslySetInnerHTML={{ __html: blog?.content }}
             />
-            <Comments post={blog} />
+            <Comments />
           </article>
         </div>
       </main>
@@ -170,9 +174,9 @@ const SingleBlog = () => {
                   {article.content.split(" ").length > 20 && (
                     <button
                       onClick={() => {
-                        navigate(`/singleBlog/${article._id}`, {
-                          state: { data: article },
-                        });
+                        // navigate(`/singleBlog/${article._id}`, {
+                        //   state: { data: article },
+                        // });
                       }}
                       className="text-blue-500 hover:text-blue-700"
                     >
