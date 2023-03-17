@@ -39,7 +39,7 @@ function ChatBody() {
   const scrolRef = useRef();
   const socket = useRef();
 
-  const cloudAPI = "dqrsgqgot";
+  const cloudAPI = "dudskpuk4";
   const imageRef = useRef();
   const videoRef = useRef();
 
@@ -139,8 +139,7 @@ function ChatBody() {
     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudAPI}/${type}/upload`;
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", "fotwebcloud");
-    data.append("cloud_name", "dqrsgqgot");
+    data.append("upload_preset", "blogapp");
     try {
       const res = await fetch(cloudinaryUrl, {
         method: "post",

@@ -9,22 +9,24 @@ import instance from "../utils/baseUrl";
 import Comments from "../components/Comments";
 import { useDispatch } from "react-redux";
 import { setSingleBlog } from "../redux/slices/blogSlice";
+import Dummy from "../pages/Dummy";
 
 const SingleBlog = () => {
-
   const location = useLocation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const blog = location.state.data;
   const navigate = useNavigate();
 
-  dispatch(setSingleBlog(location.state.data))
+  dispatch(setSingleBlog(location.state.data));
 
   const token = localStorage.getItem("token");
   const { userId } = jwtDecode(token);
-  
-  const [author, setAuthor] = useState('');
+
+  const [author, setAuthor] = useState("");
   const [user, setUser] = useState({});
   const [article, setArticle] = useState([]);
+  const [showComponent, setShowComponent] = useState(false);
+  const [blogId, setBlogId] = useState(blog._id);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -46,20 +48,12 @@ const SingleBlog = () => {
 
   useEffect(() => {
     if (blog.author === userId) {
-      setAuthor('author');
+      setAuthor("author");
     }
   }, [blog]);
 
-  const handleEditClick = (blogId) => {
-    instance.post("/blog/editBlog", {
-      params: {
-        id: blogId,
-      },
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+  const handleClick = () => {
+    setShowComponent(true);
   };
 
   function handleDeleteClick(blogId) {
@@ -71,14 +65,13 @@ const SingleBlog = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }, 
+        },
       })
       .then((res) => {
         toast.success(res.data.msg);
         navigate("/post");
       });
   }
-
 
   return (
     <div>
@@ -120,18 +113,22 @@ const SingleBlog = () => {
             </header>
 
             <figure>
-              <img src={blog.imageUrl} alt="" />
+              <img src={blog.imageUrl} alt="" className="h-96 w-full" />
             </figure>
-            {author === 'author' && ( 
+            {author === "author" && (
               <div class="p-2 flex items-end space-x-4">
-                <button onClick={()=>handleEditClick} >
-                  <EditIcon /> 
+                <button
+                  onClick={() =>
+                    navigate("/editBlog", { state: { data: blog } })
+                  }
+                >
+                  <EditIcon />
                 </button>
-                <button onClick={()=>handleDeleteClick(blog._id)}>
+                <button onClick={() => handleDeleteClick(blog._id)}>
                   <DeleteIcon />
                 </button>
-              </div> 
-             )}
+              </div>
+            )}
             <p
               className="mt-4"
               dangerouslySetInnerHTML={{ __html: blog?.content }}

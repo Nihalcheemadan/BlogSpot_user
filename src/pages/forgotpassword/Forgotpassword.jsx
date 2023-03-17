@@ -55,9 +55,7 @@ const Forgotpassword = () => {
             <button className='submit'  onClick={(e) => handleSubmit(e)}  type="submit">Submit</button>
           </div>
           <div className="resendButton">
-            
           </div>
-          
         </div>
       </div>
     </div>

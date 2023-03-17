@@ -4,6 +4,8 @@ import { toast, Toaster } from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import instance from "../utils/baseUrl";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FaStar } from 'react-icons/fa';
+
 import {
   faUsers,
   faEdit,
@@ -15,7 +17,7 @@ function Profile() {
   const navigate = useNavigate();
   const location = useLocation();
   const author = location.state.data;
-  const [alreadyFollowed, setAlreadyFollowed] = useState(false);
+  const [alreadyFollowed, setAlreadyFollowed] = useState();
   const [userProfile, setUserProfile] = useState(false);
   const token = localStorage.getItem("token");
 
@@ -25,6 +27,7 @@ function Profile() {
 
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [userPrime, setUserPrime] = useState(false);
   const [userData, setUserData] = useState("");
   const [gallery, setGallery] = useState([]);
 
@@ -51,11 +54,17 @@ function Profile() {
           "Content-Type": "application/json",
         },
       }
-    );
-    setAlreadyFollowed((prev) => !prev);
-    alreadyFollowed === true
-      ? toast.success("You're now following this user")
-      : toast.success("You're now Unfollowing this user");
+    )
+    .then((res)=>{
+      console.log(res,'res herer');
+      setAlreadyFollowed((prev) => !prev);
+      toast.success(res.data)
+    }).catch((error)=>{
+      toast.error(error.response.data)
+    })
+    // alreadyFollowed === true
+    //   ? toast.success("You're now following this user")
+    //   : toast.success("You're now Unfollowing this user");
   };
 
   useEffect(() => {
@@ -72,6 +81,7 @@ function Profile() {
       })
       .then((res) => {
         setUserData(res.data.user);
+        setUserPrime(res.data.user.isPremiumUser);
         setGallery(res.data.gallery);
         setFollowers(res.data.followers);
         setFollowing(res.data.following);
@@ -179,7 +189,7 @@ function Profile() {
                 <p class="text-2xl font-bold text-gray-800">
                   {userData?.username}
                 </p>
-                {/* {userPrime != false && (
+                {userPrime !== false && (
                   <span class="bg-blue-500 rounded-full p-1" title="Verified">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +206,7 @@ function Profile() {
                       ></path>
                     </svg>
                   </span>
-                )} */}
+                )}
               </div>
             </div>
 
@@ -279,6 +289,7 @@ function Profile() {
                   </div>
                 </div>
               </div>
+              
             </div>
           )}
 
@@ -343,7 +354,6 @@ function Profile() {
 
           <div class="container mx-auto px-6 mt-16 max-w-screen-xl">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Related Posts</h2>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               {blog &&
                 blog.map((blog) => (

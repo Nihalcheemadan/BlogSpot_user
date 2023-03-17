@@ -15,27 +15,35 @@ const PostBody = () => {
   const [category, setCategory] = useState("");
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
     const getBlog = async (req, res) => {
-      await instance.get("/admin/getBlog").then((res) => {
-        const data = res.data.blog;
-        setBlog(res.data.blog);
-        dispatch(setBlogs(res.data.blog))
-        category
-          ? setTempBlog(data.filter((blog) => blog.category === category))
-          : setTempBlog(data);
-      })
-    }
+      await instance
+        .get("/user/getBlogs", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+        )
+        .then((res) => {
+          const data = res.data.blog;
+          setBlog(res.data.blog);
+          dispatch(setBlogs(res.data.blog));
+          category
+            ? setTempBlog(data.filter((blog) => blog.category === category))
+            : setTempBlog(data);
+        });
+    };
     getBlog();
-  }, [])
-
-
-  useEffect(() => {
-    instance.get("/user/categories").then((res) => { 
-      setCategory(res.data);
-      dispatch(setCategories(res.data))
-    });
   }, []);
 
+  useEffect(() => {
+    instance.get("/user/categories").then((res) => {
+      setCategory(res.data);
+      dispatch(setCategories(res.data));
+    });
+  }, []);
 
   const [search, setSearch] = useState("");
 
@@ -48,12 +56,19 @@ const PostBody = () => {
     const filteredCategory = blog.filter((blog) => blog.category === category);
     setTempBlog(filteredCategory);
   };
+
   console.log(selectedButton);
 
   const viewAll = () => {
     setTempBlog(blog);
     setSelectedButton("allButton");
   };
+
+  // const followingPost = () => {
+  //   setTempBlog(blog);
+  //   setSelectedButton("followingPost");
+  // }
+
   return (
     <>
       <form class="flex items-center p-5 ml-96 w-96">
@@ -75,19 +90,35 @@ const PostBody = () => {
 
       <div className="inline-flex gap-4 p-5 ml-96 w-{25rem}">
         {selectedButton === "allButton" ? (
-          <button
-            onClick={viewAll}
-            className="bg-teal-500  hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
-          >
-            View All posts
-          </button>
+          <div className="">
+            <button
+              onClick={viewAll}
+              className="bg-teal-500  hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+            >
+              View All posts
+            </button>
+            {/* <button
+              onClick={followingPost}
+              className="bg-teal-200 ml-4  hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+            >
+              For You
+            </button> */}
+          </div>
         ) : (
-          <button
-            onClick={viewAll}
-            className="bg-teal-200  hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
-          >
-            View All posts
-          </button>
+          <div className="">
+            <button
+              onClick={viewAll}
+              className="bg-teal-200  hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+            >
+              View All posts
+            </button>
+            {/* <button
+              onClick={followingPost}
+              className="bg-teal-200 ml-4 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded"
+            >
+              For You
+            </button> */}
+          </div>
         )}
 
         {category &&

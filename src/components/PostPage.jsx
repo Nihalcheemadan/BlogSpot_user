@@ -44,8 +44,7 @@ const PostPage = ({ post }) => {
     }else{
       setSaved(false); 
     }
-  }, []);
-  
+  }, [change]);
 
   const handleLikeClick = async (id) => {
     await instance
@@ -65,26 +64,24 @@ const PostPage = ({ post }) => {
         if (res?.data?.liked === true) {
           setCount(count + 1);
           setLiked(prev => !prev);
-          toast.success(res.data.msg);
           setChange((prev) => !prev);
+          toast.success(res.data.msg);
         } else {
           setCount(count - 1);
           setLiked(true);
+          setChange((prev) => !prev);
           toast.success(res.data.msg);
         }
         // setLiked(res?.data?.liked);
       });
   };
 
-  console.log(reported,'reporteddddddddddddddd');
 
   const saveBlog = async (id) => {
     await instance
       .put(
-        "//blog/saveBlog",
+        "/blog/saveBlog",
         { id },
-
-
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -184,6 +181,7 @@ const PostPage = ({ post }) => {
           </a>
           <div>
             <header>
+              
               <div class="">
                 <ul class="flex flex-wrap text-xs font-medium -m-1">
                   <li class="m-1">
@@ -302,7 +300,9 @@ const PostPage = ({ post }) => {
           </div>
         </article>
       </div>
+      
     </section>
+    
   );
 };
 

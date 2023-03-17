@@ -9,10 +9,11 @@ import instance from "../utils/baseUrl";
 import jwtDecode from "jwt-decode";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsers, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FaStar } from "react-icons/fa";
 
 function UserProfile() {
   const [change, setChange] = useState(false);
-  const cloudAPI = "dqrsgqgot";
+  const cloudAPI = "dudskpuk4";
   const [showModal, setShowModal] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
@@ -39,8 +40,6 @@ function UserProfile() {
     showProfile();
   }, [change]);
 
-  console.log(gallery, "userrrrrrrrr");
-
   const { userId } = jwtDecode(token);
 
   const showProfile = async () => {
@@ -59,7 +58,7 @@ function UserProfile() {
         setCountry(res.data.user.country);
         setAbout(res.data.user.about);
         setAddress(res.data.user.address);
-        setUserPrime(res.data.user.premium);
+        setUserPrime(res.data.user.isPremiumUser);
         setGallery(res.data.gallery);
         setFollowers(res.data.followers);
         setFollowing(res.data.following);
@@ -80,7 +79,7 @@ function UserProfile() {
       for (let i = 0; i < photos.length; i++) {
         count++;
         formData.append("file", photos[i]);
-        formData.append("upload_preset", "fotwebcloud");
+        formData.append("upload_preset", "blogapp");
         await axios
           .post(
             `https://api.cloudinary.com/v1_1/${cloudAPI}/image/upload`,
@@ -128,7 +127,8 @@ function UserProfile() {
         {
           label: "Yes",
           onClick: async () => {
-            change === true ? setChange(false) : setChange(true);
+            // change === true ? setChange(false) : setChange(true);
+            setChange((prev) => !prev);
             await instance
               .post(
                 `/user/galleryDelete`,
@@ -136,7 +136,7 @@ function UserProfile() {
                 { headers: { Authorization: `Bearer ${token}` } }
               )
               .then((res) => {
-                change === true ? setChange(false) : setChange(true);
+                setChange((prev) => !prev);
                 toast.success("done");
               });
           },
@@ -176,9 +176,8 @@ function UserProfile() {
           )
           .then((response) => {
             if (response) {
-              change === true ? setChange(false) : setChange(true);
+              setChange((prev) => !prev);
               toast.success("Profile Added Successfully");
-              setShowModal(false);
             }
           })
           .catch((error) => {
@@ -289,7 +288,7 @@ function UserProfile() {
                 <p class="text-2xl font-bold text-gray-800">
                   {userData?.username}
                 </p>
-                {/* {userPrime != false && (
+                {userPrime !== false && (
                   <span class="bg-blue-500 rounded-full p-1" title="Verified">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -306,7 +305,7 @@ function UserProfile() {
                       ></path>
                     </svg>
                   </span>
-                )} */}
+                )}
               </div>
             </div>
 
@@ -496,6 +495,16 @@ function UserProfile() {
               </div>
             </div>
           ) : null}
+        {userPrime === false && (
+          <div className="flex items-center align-middle">
+            <div className="rounded-full items-center bg-yellow-500 text-white p-1 mr-2">
+              <FaStar className="text-xl" />
+            </div>
+            <button onClick={()=>navigate('/payment')} className="text-gray-600 font-medium bg-transparent border border-gray-600 px-2 py-1 rounded hover:bg-gray-600 hover:text-white transition-colors">
+              Get Premium
+            </button>
+          </div>
+        )}
 
           <div class="my-4 flex flex-col 2xl:flex-row space-y-4 2xl:space-y-0 2xl:space-x-4">
             <div class="w-full 2xl:2/3">

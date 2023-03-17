@@ -3,13 +3,16 @@ import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import instance from "../utils/baseUrl";
 
-function Dummy() {
+function Payments() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
 
   return (
-    <div className="mt-5 bg-[url('https://images.unsplash.com/photo-1415018255745-0ec3f7aee47b?dpr=1&auto=format&fit=crop&w=1500&h=938&q=80&cs=tinysrgb&crop=')]">
+    <div className="bg-no-repeat bg-cover bg-center relative bg-[url('https://images.pexels.com/photos/768472/pexels-photo-768472.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')]">
       <Toaster position="top-center"></Toaster>
       <section className=" py-8">
+      <div class="hidden sm:block absolute bg-green-500/20 inset-0 z-0 "></div>
         <div className="container mx-auto px-2 pt-4 pb-12 text-gray-800">
           <h2 className="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
             Pricing
@@ -34,7 +37,10 @@ function Dummy() {
                   $ 0<span className="text-base">for one user</span>
                 </div>
                 <div className="flex items-center justify-center">
-                  <button onClick={()=> navigate('/userProfile')} className="mx-auto lg:mx-0 hover:bg-blend-color gradient text-slate-900 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out">
+                  <button
+                    onClick={() => navigate("/userProfile")}
+                    className="mx-auto lg:mx-0 hover:bg-blend-color gradient text-slate-900 font-bold rounded-full my-6 py-4 px-8 shadow-lg focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+                  >
                     Go
                   </button>
                 </div>
@@ -48,8 +54,8 @@ function Dummy() {
                 <hr />
                 <div className="h-1 w-full gradient my-0 py-0 rounded-t"></div>
                 <ul className="w-full text-center text-base font-bold">
-                  <li className="border-b py-4">UNLIMITED CONTENT</li>
-                  <li className="border-b py-4">AD FREE </li>
+                  <li className="border-b py-4">UNLIMITED CONTENTS</li>
+                  <li className="border-b py-4">UNLIMITED CONNECTIONS</li>
                   <li className="border-b py-4">PRIME MEMBER</li>
                   {/* <li className="border-b py-4">Thing</li> */}
                 </ul>
@@ -79,19 +85,23 @@ function Dummy() {
                         });
                       }}
                       onApprove={async (data, actions) => {
-                        const {orderID} = data
-                        if(orderID){ 
+                        const { orderID } = data;
+                        if (orderID) {
                           instance
-                          .post(`/premiumPlayer`,{}, {
-                            // headers:{Authorization:`Bearer ${token}`}
-                          }).then((res) => {
-                          toast.success("payment succes")
-                           navigate('/userProfile')
-                        })
-                      }else{
-                    
-                        console.log('payment error');
-                      }
+                            .post(
+                              `/user/premiumUser`,
+                              {},
+                              {
+                                headers: { Authorization: `Bearer ${token}` },
+                              }
+                            )
+                            .then((res) => {
+                              toast.success("payment succes");
+                              navigate("/userProfile");
+                            });
+                        } else {
+                          console.log("payment error");
+                        }
                       }}
                     />
                   </PayPalScriptProvider>
@@ -105,4 +115,4 @@ function Dummy() {
   );
 }
 
-export default Dummy;
+export default Payments;

@@ -17,6 +17,8 @@ import CreateBlog from "./pages/CreateBlog";
 import Error from "./components/Error";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dummy from "./pages/Dummy";
+import EditBlog from "./pages/EditBlog";
+import Payment from "./pages/Payment";
 
 
 function App() {
@@ -33,7 +35,7 @@ function App() {
     },
     {
       path:"/chat",
-      element:<Chat/>
+      element:<ProtectedRoute><Chat/></ProtectedRoute>
     },
     {
       path:"/otp",
@@ -61,11 +63,19 @@ function App() {
     },
     {
       path:'/post',
-      element:<Post/>
+      element:<ProtectedRoute><Post/></ProtectedRoute>
     },
     {
       path:'*',
       element:<Error/>
+    },
+    {
+      path:'/editBlog',
+      element:<ProtectedRoute><EditBlog/></ProtectedRoute> 
+    },
+    {
+      path:'/payment',
+      element:<ProtectedRoute><Payment/></ProtectedRoute> 
     },
     {
       path:'/dummy',

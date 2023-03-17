@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import instance from "../utils/baseUrl";
@@ -25,20 +25,24 @@ const modules = {
   ],
 };
 
-const Create = () => {
+const Editblog = () => {
+  const location = useLocation();
+  const blog = location.state.data;
+
   const [categories, setCategories] = useState([]);
-  const [title, setTitle] = useState();
-  const [selectedcategory, setSelectedcategory] = useState();
-  const [content, setContent] = useState();
-  const [image, setImage] = useState();
+  const [title, setTitle] = useState(blog.title);
+  const [selectedcategory, setSelectedcategory] = useState(blog.category);
+  const [content, setContent] = useState(blog.content);
+  const [image, setImage] = useState(blog.imageUrl);
   const [preview, setPreview] = useState(null);
 
   const navigate = useNavigate();
-  console.log(selectedcategory);
-  useEffect(() => {
-    const token = localStorage.getItem("token");
 
+  useEffect(() => {
     async function fetchData() {
+      const token = localStorage.getItem("token");
+
+      
       const { data } = await instance.get("/admin/getCategory",{
         headers: {
           Authorization: `Bearer ${token}`,
@@ -49,6 +53,7 @@ const Create = () => {
     }
     fetchData();
   }, []);
+
   const cloudAPI = "dudskpuk4";
 
   const MAX_FILE_SIZE = 1024 * 1024 * 2; // 2MB
@@ -59,12 +64,13 @@ const Create = () => {
     "image/webp",
   ];
 
-  const uploadBlog = async (e) => {
-    try {
-      e.preventDefault();
+  // const blogId = data.blogId;
 
+  const uploadBlog = async (blogId) => {
+    try {
+      // e.preventDefault();
+      console.log("its forfsdkjfjdskljflkdjslk");
       const token = localStorage.getItem("token");
-      console.log(token, "token here ");
 
       const wordCount = content.trim().split(/\s+/g).length;
       if (wordCount < 50) {
@@ -78,7 +84,6 @@ const Create = () => {
         return;
       }
 
-      // Validate the file type
       if (!ALLOWED_FILE_TYPES.includes(image.type)) {
         toast.error("Invalid file type");
         console.error("Invalid file type");
@@ -97,9 +102,10 @@ const Create = () => {
       );
       console.log(response.data.secure_url);
       imageUrl = response.data.secure_url;
-      instance.post(
-        "/blog/createBlog",
+      await instance.post(
+        "/blog/updateBlog",
         {
+          id: blogId,
           imageUrl,
           title,
           content,
@@ -112,7 +118,7 @@ const Create = () => {
           },
         }
       );
-      toast.success("Blog created successfully");
+      toast.success("Blog updated successfully");
       navigate("/post");
     } catch (error) {
       console.error(error);
@@ -127,11 +133,14 @@ const Create = () => {
   }
 
   return (
-    <div className="flex justify-center mt-8 items-center h-screen bg-gray-100">
+    <div className="flex justify-center  items-center h-screen bg-gray-100">
       <Toaster position="top-center" reverseOrder={false}></Toaster>
       <form
-        onSubmit={uploadBlog}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          uploadBlog(blog._id);
+        }}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mt-8 mb-4"
       >
         <div className="mb-4">
           <label htmlFor="title" className="block text-gray-700 font-bold mb-2">
@@ -141,6 +150,7 @@ const Create = () => {
             type="text"
             id="title"
             name="title"
+            value={title}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             onChange={(e) => {
               setTitle(e.target.value);
@@ -159,6 +169,7 @@ const Create = () => {
             <select
               id="category"
               name="category"
+              // value={selectedcategory}
               className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
               onClick={(e) => setSelectedcategory(e.target.value)}
             >
@@ -211,18 +222,11 @@ const Create = () => {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <svg
-                  className="h-full w-full text-gray-300"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
+                <img
+                  src={image}
+                  alt="Image preview"
+                  className="h-full w-full object-cover"
+                />
               )}
             </span>
             <label
@@ -253,4 +257,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Editblog;
