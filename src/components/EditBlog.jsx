@@ -72,11 +72,11 @@ const Editblog = () => {
       console.log("its forfsdkjfjdskljflkdjslk");
       const token = localStorage.getItem("token");
 
-      const wordCount = content.trim().split(/\s+/g).length;
-      if (wordCount < 50) {
-        alert("Please write at least 50 words.");
-        return;
-      }
+      // const wordCount = content.trim().split(/\s+/g).length;
+      // if (wordCount < 50) {
+      //   alert("Please write at least 50 words.");
+      //   return;
+      // }
 
       if (image.size > MAX_FILE_SIZE) {
         console.error("File size is too large");

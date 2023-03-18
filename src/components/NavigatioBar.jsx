@@ -2,6 +2,8 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import auth from "../redux/slices/auth";
 
 const navigation = [
   { name: "Home", href: "/", current: false },
@@ -11,10 +13,14 @@ const navigation = [
 ];
 
 function classNames(...classes) {
+  
   return classes.filter(Boolean).join(" ");
 }
 
 export default function NavigatioBar() {
+  const { authenticate } = useSelector((state)=> state.auth)
+
+  console.log(authenticate,'authhhhhhhhh')
   return (
     <Disclosure as="nav" className="bg-gray-100">
       {({ open }) => (

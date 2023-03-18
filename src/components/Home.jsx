@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import instance from "../utils/baseUrl";
 
@@ -11,11 +11,20 @@ const backgroundImageStyle = {
 const Home = () => {
   const [blog, setBlog] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getBlog = async (req, res) => {
-      await instance.get("/admin/getBlog").then((res) => {
-        setBlog(res.data.blog);
-      });
+      const token = localStorage.getItem("token");
+      await instance
+        .get("/admin/getBlog", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((res) => {
+          setBlog(res.data.blog);
+        });
     };
     getBlog();
   }, []);
@@ -27,35 +36,53 @@ const Home = () => {
 
   return (
     <div className="App ">
-      <div className=" text-black " style={backgroundImageStyle}>
-        <div className="bg-gray-100 from-black px-8 py-16">
-          <div className=" max-w-3xl grid grid-cols-1 gap-8">
-            <div className="w-12">
-              {/* <ReactLogo className="fill-white" /> */}
-            </div>
-            {/* <h2 className="text-xl uppercase font-bold">Learn. Explore. Ideate. Create.</h2> */}
-            <h2 className="text-5xl font-bold text-gray-500">
-              {/* Host your space, share your world */}
-              Explore blogs here
-            </h2>
-            <p className="text-lg text-gray-400">
+      <section class="bg-white dark:bg-gray-900">
+        <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+          <div class="mr-auto place-self-center lg:col-span-7">
+            <h1 class="max-w-2xl mb-4 text-4xl font-extrabold leading-none md:text-5xl xl:text-6xl dark:text-white">
+              Welcome to Blogspot website
+            </h1>
+            <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
               Learning is where everything starts, but continuous practice and
               discipline helps you reach new heights of success and raise your
               bar. So here’s our blog, where we constantly publish new material
               on the following topics to share our thoughts and learn from your
-              experiences : -
             </p>
-            <Link
-              to="/create-post"
-              className="text-center text-2xl font-medium bg-gradient-to-r from-pink-600 to-orange-600 py-3 px-6 rounded-md w-48"
+            <a
+              href="/post"
+              class="inline-flex items-center justify-center px-5 py-3 mr-3 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
+            >
+              Explore
+              <svg
+                class="w-5 h-5 ml-2 -mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </a>
+            <a
+              href="/create"
+              class="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
             >
               Create
-            </Link>
+            </a>
+          </div>
+          <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
+            <img
+              src="https://coolbackgrounds.io/images/backgrounds/white/pure-white-background-85a2a7fd.jpg"
+              alt="mockup"
+            />
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="px-8 bg-gray-100">
+      <div className="px-8 bg-white">
         {/* <Cards postList={postList}/> */}
         <div>
           <section class="md:h-full flex items-center text-gray-600">
@@ -131,15 +158,14 @@ const Home = () => {
             </div>
           </section>
           <div class="flex justify-center">
-            <Link to='/post'>
-
-            <button class="bg-indigo-500 mb-16 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-              Explore More
-            </button>
+            <Link to="/post">
+              <button class="bg-indigo-500 mb-16 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                Explore More
+              </button>
             </Link>
           </div>
         </div>
-        <footer class="bg-gray-100 py-6">
+        <footer class="bg-white py-6">
           <div class="container mx-auto px-6 lg:px-12">
             <div class="flex flex-col md:flex-row justify-between items-center">
               <p class="text-gray-600 text-center md:text-left">
