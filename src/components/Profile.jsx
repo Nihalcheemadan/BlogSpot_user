@@ -236,7 +236,7 @@ function Profile() {
 
             {userProfile === false && (
               <div className="flex flex-col items-end">
-                <button className="mx-auto lg:mx-0 bg-gradient-to-r from-blue-500/60 to-indigo-600/60 text-white font-bold rounded-full my-6 py-3 px-10 shadow-lg focus:outline-none focus:shadow-outline transition hover:shadow-sm duration-300 ease-in-out">
+                <button onClick={()=> navigate('/chat')} className="mx-auto lg:mx-0 bg-gradient-to-r from-blue-500/60 to-indigo-600/60 text-white font-bold rounded-full my-6 py-3 px-10 shadow-lg focus:outline-none focus:shadow-outline transition hover:shadow-sm duration-300 ease-in-out">
                   <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
                   Message
                 </button>
