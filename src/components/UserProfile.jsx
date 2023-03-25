@@ -496,11 +496,12 @@ function UserProfile() {
             </div>
           ) : null}
         {userPrime === false && (
-          <div className="flex items-center align-middle">
+          <div className="flex justify-center mt-3">
             <div className="rounded-full items-center bg-yellow-500 text-white p-1 mr-2">
               <FaStar className="text-xl" />
             </div>
-            <button onClick={()=>navigate('/payment')} className="text-gray-600 font-medium bg-transparent border border-gray-600 px-2 py-1 rounded hover:bg-gray-600 hover:text-white transition-colors">
+
+            <button onClick={()=>navigate('/payment')} className="flex text-gray-600 font-medium bg-transparent border border-gray-600 px-2 py-1 rounded hover:bg-gray-600 hover:text-white transition-colors">
               Get Premium
             </button>
           </div>

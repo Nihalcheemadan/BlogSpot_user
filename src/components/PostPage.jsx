@@ -7,7 +7,9 @@ import FlagIcon from "@mui/icons-material/Flag";
 import OutlinedFlagOutlinedIcon from "@mui/icons-material/OutlinedFlagOutlined";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import OutlinedFlagIcon from '@mui/icons-material/OutlinedFlag';
+import OutlinedFlagIcon from "@mui/icons-material/OutlinedFlag";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import jwtDecode from "jwt-decode";
 import instance from "../utils/baseUrl";
@@ -19,6 +21,9 @@ const PostPage = ({ post }) => {
   const [reported, setReported] = useState(true);
   const [blogId, setBlogId] = useState(post?._id);
   const [change, setChange] = useState(false);
+  const [reason, setReason] = useState("reported it");
+
+  const [reportModal, setReportModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -31,18 +36,18 @@ const PostPage = ({ post }) => {
     const { userId } = jwtDecode(token);
     if (post.like.includes(userId)) {
       setLiked(true);
-    }else{
-      setLiked(false); 
+    } else {
+      setLiked(false);
     }
     if (post.reported.includes(userId)) {
       setReported(true);
-    }else{
-      setReported(false); 
+    } else {
+      setReported(false);
     }
     if (post.saved.includes(userId)) {
       setSaved(true);
-    }else{
-      setSaved(false); 
+    } else {
+      setSaved(false);
     }
   }, [change]);
 
@@ -63,7 +68,7 @@ const PostPage = ({ post }) => {
         // setCount(res.data.post.like);
         if (res?.data?.liked === true) {
           setCount(count + 1);
-          setLiked(prev => !prev);
+          setLiked((prev) => !prev);
           setChange((prev) => !prev);
           toast.success(res.data.msg);
         } else {
@@ -75,7 +80,6 @@ const PostPage = ({ post }) => {
         // setLiked(res?.data?.liked);
       });
   };
-
 
   const saveBlog = async (id) => {
     await instance
@@ -91,29 +95,29 @@ const PostPage = ({ post }) => {
       )
       .then((res) => {
         console.log(res.data);
-        setSaved(prev => !prev);
+        setSaved((prev) => !prev);
         toast.success(res.data.msg);
       });
   };
 
   //reportBlog
 
-  const reportBlog = async (id) => {
+  const reportBlog = async (e, id, reason) => {
     try {
+      e.preventDefault();
       const token = localStorage.getItem("token");
-      const response = await instance.put(
+      const response = await instance.post(
         "/blog/reportBlog",
-        { id },
+        { id, reason },
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
-      );
-      console.log(response.data);
-      setReported(prev => !prev);
+      )
       toast.success(response.data.msg);
+      setReportModal(false);
     } catch (error) {
       console.error(error);
       toast.error(error.response.data.error);
@@ -138,7 +142,7 @@ const PostPage = ({ post }) => {
         setLiked(res.data.liked);
         setSaved(res.data.saved);
       });
-  }, [handleLikeClick,change,count ]);
+  }, [handleLikeClick, change, count]);
 
   function getTimeAgo(createdAt) {
     const currentDate = new Date();
@@ -181,7 +185,6 @@ const PostPage = ({ post }) => {
           </a>
           <div>
             <header>
-              
               <div class="">
                 <ul class="flex flex-wrap text-xs font-medium -m-1">
                   <li class="m-1">
@@ -223,19 +226,18 @@ const PostPage = ({ post }) => {
               </button>
             )}
             <footer class="flex items-center mt-4">
-              
-                <img
+              <img
                 onClick={() =>
                   navigate(`/dprofile/${post?.author?._id}`, {
                     state: { data: post?.author },
                   })
                 }
-                  class="rounded-full flex-shrink-0 mr-4"
-                  src={post?.author?.profileImg}
-                  width="40"
-                  height="40"
-                  alt="Author 04"
-                />
+                class="rounded-full flex-shrink-0 mr-4"
+                src={post?.author?.profileImg}
+                width="40"
+                height="40"
+                alt="Author 04"
+              />
               <div className="flex">
                 <div>
                   <button
@@ -271,16 +273,60 @@ const PostPage = ({ post }) => {
                     <span
                       className="text-gray-500 cursor-pointer"
                       onClick={() => {
-                        reportBlog(post?._id);
+                        setReportModal((prev) => !prev);
                       }}
                     >
-                      {reported === true ? (
-                        <FlagIcon />
-                        ) : (
-                        <OutlinedFlagIcon />
-                      )}
+                      {reported === true ? <FlagIcon /> : <OutlinedFlagIcon />}
                     </span>
                   </div>
+
+                  {reportModal && (
+                    <div class="fixed inset-0 z-50 overflow-auto bg-gray-500 bg-opacity-75 {{ reportModal ? '' : 'hidden' }}">
+                      <div class="flex items-center justify-center h-full">
+                        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                          <div class="flex justify-end">
+                            <button
+                              className="text-gray-600 hover:text-gray-800"
+                              onClick={() => setReportModal(false)}
+                            >
+                              <FontAwesomeIcon icon={faTimes} />
+                            </button>
+                          </div>
+                          <h2 class="text-xl text-gray-600 font-semibold mb-4 text-center">
+                            Report Blog
+                          </h2>
+                          <form
+                            onSubmit={(e) => reportBlog(e, post?._id, reason)}
+                          >
+                            <div class="flex mb-4">
+                              <div class="w-full pl-2">
+                                <label
+                                  class="block text-gray-700 font-bold mb-2"
+                                  for="reason"
+                                >
+                                  Reason for report:
+                                </label>
+                                <textarea
+                                  class="form-textarea text-gray-600 block w-full mt-1 border-gray-400 border-2 p-2 rounded-md"
+                                  id="reason"
+                                  name="reason"
+                                  onChange={(e) => setReason(e.target.value)}
+                                ></textarea>
+                              </div>
+                            </div>
+                            <div class="flex justify-end">
+                              <button
+                                type="submit"
+                                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded mr-2"
+                              >
+                                Report
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <div
                     className="text-gray-500 cursor-pointer"
@@ -291,7 +337,7 @@ const PostPage = ({ post }) => {
                     {saved === true ? (
                       <BookmarkAddedIcon />
                     ) : (
-                      < BookmarkBorderIcon/>
+                      <BookmarkBorderIcon />
                     )}
                   </div>
                 </div>
@@ -300,9 +346,7 @@ const PostPage = ({ post }) => {
           </div>
         </article>
       </div>
-      
     </section>
-    
   );
 };
 
